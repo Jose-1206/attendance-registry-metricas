@@ -1,0 +1,187 @@
+openapi: 3.1.0
+
+info:
+  title: Attendance Records API
+  description: |
+    Contract for attendance registration, student history and teacher
+    review by class session.
+
+    Implementation was not verified during the identity and course review.
+    The HU-11 path is proposed and must be confirmed with the attendance
+    implementation owner before being treated as final.
+  version: 1.0.0
+
+servers:
+  - url: /api/v1
+
+security:
+  - bearerAuth: []
+tags:
+  - name: Attendance
+    description: Student check-ins and teacher attendance review.
+
+paths:
+  /asistencias:
+    post:
+      operationId: registerAttendance
+      x-implementation-status: not-verified
+      tags:
+        - Attendance
+      summary: Register student attendance
+      description: |
+        Intended for authenticated students.
+
+        The implementation must resolve the student from the validated
+        identity and validate the QR, session, applicable enrollment
+        rules and duplicate attendance restrictions.
+
+        This operation has not been verified in this review.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AttendanceRequest"
+      responses:
+        "201":
+          description: Attendance registered.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AttendanceRecord"
+        "400":
+          description: Invalid request or QR.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          description: Student role or applicable enrollment requirement not satisfied.
+        "404":
+          description: Required session or user does not exist.
+        "409":
+          description: Attendance already registered for this student and session.
+
+  /asistencias/historial:
+    get:
+      operationId: getOwnAttendanceHistory
+      x-implementation-status: not-verified
+      tags:
+        - Attendance
+      summary: Retrieve my attendance history
+      description: |
+        Intended to return only records for the authenticated student.
+        A client-supplied student identifier must not override that identity.
+
+        Implementation has not been verified in this review.
+      responses:
+        "200":
+          description: Student attendance history; an empty array is allowed.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AttendanceRecord"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          description: The authenticated user does not have the STUDENT role.
+
+  /clases/{claseId}/asistencias:
+    get:
+      operationId: getClassAttendance
+      x-implementation-status: proposed
+      x-related-story: HU-11
+      tags:
+        - Attendance
+      summary: Review attendance for a class session
+      description: |
+        Proposed HU-11 operation.
+
+        Intended for the teacher who owns the course associated with
+        the requested session. Teacher role alone is insufficient.
+
+        Returns registered attendance records, not a complete enrollment
+        roster or a computed list of absences.
+
+        The route, response fields and ownership error policy must be
+        confirmed with the attendance implementation owner.
+
+        The proposed ownership policy returns 404 for an unavailable
+        session or a session owned by another teacher.
+      parameters:
+        - name: claseId
+          in: path
+          required: true
+          description: Positive class session identifier.
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        "200":
+          description: Registered attendance for the session; an empty array is allowed.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AttendanceRecord"
+        "400":
+          description: Invalid class session identifier.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          description: The authenticated user does not have the TEACHER role.
+        "404":
+          description: Session does not exist or is not owned by the teacher.
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  responses:
+    Unauthorized:
+      description: Missing, invalid or expired bearer token.
+
+  schemas:
+    AttendanceRequest:
+      type: object
+      required:
+        - qr
+      properties:
+        qr:
+          type: string
+          minLength: 1
+          description: QR token associated with a class session.
+          example: attendance-qr-token
+
+    AttendanceRecord:
+      type: object
+      required:
+        - id
+        - studentId
+        - claseId
+        - registeredAt
+      properties:
+        id:
+          type: integer
+          format: int64
+          minimum: 1
+          example: 1
+        studentId:
+          type: integer
+          format: int64
+          minimum: 1
+          example: 5
+        claseId:
+          type: integer
+          format: int64
+          minimum: 1
+          example: 10
+        registeredAt:
+          type: string
+          format: date-time
+          example: "2026-11-07T15:00:00-05:00"

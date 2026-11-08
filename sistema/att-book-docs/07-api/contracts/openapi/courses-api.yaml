@@ -1,0 +1,244 @@
+openapi: 3.1.0
+
+info:
+  title: Attendance Courses API
+  description: |
+    Teacher-owned course management for Attendance Registry.
+
+    All operations require a validated JWT with role TEACHER.
+    The owner is taken from the authenticated identity, never from
+    a request body field.
+
+    Creation and listing were checked manually against PostgreSQL.
+    Retrieval, update, deletion and ownership rules are covered by
+    the existing course controller and service tests.
+  version: 1.0.0
+
+servers:
+  - url: /api/v1
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Courses
+    description: Management of courses owned by the authenticated teacher.
+
+paths:
+  /cursos:
+    get:
+      operationId: listOwnedCourses
+      tags:
+        - Courses
+      summary: List my courses
+      description: |
+        Returns only courses owned by the authenticated teacher,
+        ordered by identifier. The current response is an unpaginated array.
+      responses:
+        "200":
+          description: Owned courses retrieved; an empty array is allowed.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Curso"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+    post:
+      operationId: createCourse
+      tags:
+        - Courses
+      summary: Create a course
+      description: |
+        Creates a course owned by the authenticated teacher.
+        The server assigns profesorId from the validated identity.
+      requestBody:
+        $ref: "#/components/requestBodies/CourseInput"
+      responses:
+        "201":
+          description: Course created.
+          headers:
+            Location:
+              description: URL of the created course.
+              schema:
+                type: string
+                format: uri
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Curso"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/Conflict"
+
+  /cursos/{id}:
+    parameters:
+      - $ref: "#/components/parameters/CourseId"
+
+    get:
+      operationId: getOwnedCourse
+      tags:
+        - Courses
+      summary: Retrieve one of my courses
+      responses:
+        "200":
+          description: Owned course retrieved.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Curso"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+    put:
+      operationId: updateOwnedCourse
+      tags:
+        - Courses
+      summary: Update one of my courses
+      description: |
+        Replaces the course name and code.
+        The owner cannot be changed through this operation.
+      requestBody:
+        $ref: "#/components/requestBodies/CourseInput"
+      responses:
+        "200":
+          description: Course updated.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Curso"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+
+    delete:
+      operationId: deleteOwnedCourse
+      tags:
+        - Courses
+      summary: Delete one of my courses
+      description: |
+        Deletes a course owned by the authenticated teacher.
+        Database integrity conflicts, including related records that
+        prevent deletion, return 409.
+      responses:
+        "204":
+          description: Course deleted; no response body.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    CourseId:
+      name: id
+      in: path
+      required: true
+      description: Positive course identifier.
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+        example: 1
+
+  requestBodies:
+    CourseInput:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CursoRequest"
+
+  responses:
+    BadRequest:
+      description: Invalid request fields or non-positive identifier.
+    Unauthorized:
+      description: Missing, invalid or expired bearer token.
+    Forbidden:
+      description: The authenticated user does not have the TEACHER role.
+    NotFound:
+      description: |
+        Course does not exist or belongs to another teacher.
+        Both cases return 404.
+    Conflict:
+      description: The operation conflicts with database integrity constraints.
+
+  schemas:
+    CursoRequest:
+      type: object
+      required:
+        - nombre
+        - codigo
+      properties:
+        nombre:
+          type: string
+          minLength: 1
+          maxLength: 150
+          pattern: '\S'
+          example: Desarrollo Fullstack
+        codigo:
+          type: string
+          minLength: 1
+          maxLength: 30
+          pattern: '\S'
+          example: DEMO-FS-01
+
+    Curso:
+      type: object
+      required:
+        - id
+        - nombre
+        - codigo
+        - profesorId
+      properties:
+        id:
+          type: integer
+          format: int64
+          minimum: 1
+          example: 1
+        nombre:
+          type: string
+          example: Desarrollo Fullstack
+        codigo:
+          type: string
+          example: DEMO-FS-01
+        profesorId:
+          type: integer
+          format: int64
+          minimum: 1
+          description: Identifier of the teacher who owns the course.
+          example: 3
