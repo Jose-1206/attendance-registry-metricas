@@ -1,0 +1,25 @@
+﻿# Dependencias
+node_modules/
+
+# Compilados
+target/
+dist/
+build/
+
+# Variables de entorno
+.env
+.env.*
+!.env.example
+
+# Archivos temporales
+*.log
+*.tmp
+
+# Configuracion local
+.vscode/
+.idea/
+.DS_Store
+
+# Archivos del sistema operativo
+Thumbs.db
+desktop.ini
