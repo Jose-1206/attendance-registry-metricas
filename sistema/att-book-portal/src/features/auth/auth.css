@@ -1,0 +1,53 @@
+.auth-panel {
+  max-width: 32rem;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 1rem;
+  background: #fff;
+  color: #172033;
+}
+
+.auth-panel fieldset {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.auth-panel input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #64748b;
+  border-radius: 0.5rem;
+  font: inherit;
+}
+
+.auth-panel button,
+.session-bar button {
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+}
+
+.auth-panel [role='alert'] {
+  color: #991b1b;
+}
+
+.session-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.auth-panel input:focus-visible,
+.auth-panel button:focus-visible,
+.session-bar button:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 3px;
+}

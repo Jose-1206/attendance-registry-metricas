@@ -1,0 +1,139 @@
+openapi: 3.1.0
+
+info:
+  title: Attendance QR API
+  description: API contract for QR code generation and validation.
+  version: 1.0.0
+
+servers:
+  - url: /api/v1
+
+tags:
+  - name: QR
+    description: Operations for generating and validating attendance QR codes.
+
+paths:
+
+  /clases/{claseId}/qr:
+    post:
+      tags:
+        - QR
+      summary: Generate a QR code for a class session
+      description: Generates a QR code associated with a class session.
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - name: claseId
+          in: path
+          required: true
+          description: Class session identifier.
+          schema:
+            type: integer
+            example: 1
+
+      responses:
+        "200":
+          description: QR code generated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QrResponse"
+
+        "401":
+          description: Missing or invalid authentication token.
+
+        "403":
+          description: Authenticated user does not have permission to generate the QR code.
+
+        "404":
+          description: Class session not found.
+
+
+  /qr/validate:
+    post:
+      tags:
+        - QR
+      summary: Validate an attendance QR code
+      description: Validates a QR code before registering attendance.
+      security:
+        - bearerAuth: []
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/QrValidationRequest"
+
+      responses:
+        "200":
+          description: QR code is valid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QrValidationResponse"
+
+        "400":
+          description: Invalid QR code.
+
+        "401":
+          description: Missing or invalid authentication token.
+
+        "404":
+          description: QR code or associated class session was not found.
+
+        "409":
+          description: QR code has expired or is no longer valid.
+
+
+components:
+
+  securitySchemes:
+
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+
+  schemas:
+
+    QrResponse:
+      type: object
+      properties:
+        qr:
+          type: string
+          example: "attendance-qr-token"
+
+        expiresAt:
+          type: string
+          format: date-time
+          example: "2026-09-26T08:15:00"
+
+
+    QrValidationRequest:
+      type: object
+      required:
+        - qr
+      properties:
+        qr:
+          type: string
+          example: "attendance-qr-token"
+
+
+    QrValidationResponse:
+      type: object
+      properties:
+        valid:
+          type: boolean
+          example: true
+
+        claseId:
+          type: integer
+          example: 1
+
+        expiresAt:
+          type: string
+          format: date-time
+          example: "2026-09-26T08:15:00"

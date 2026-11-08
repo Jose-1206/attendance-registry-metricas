@@ -1,0 +1,167 @@
+openapi: 3.1.0
+
+info:
+  title: Attendance Classes API
+  description: API contract for class session management.
+  version: 1.0.0
+
+servers:
+  - url: /api/v1
+
+tags:
+  - name: Classes
+    description: Operations for class sessions associated with courses.
+
+paths:
+
+  /cursos/{cursoId}/clases:
+    get:
+      tags:
+        - Classes
+      summary: List class sessions
+      description: Returns the class sessions associated with a course.
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - name: cursoId
+          in: path
+          required: true
+          description: Course identifier.
+          schema:
+            type: integer
+            example: 1
+
+      responses:
+        "200":
+          description: Class sessions retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Clase"
+
+        "401":
+          description: Missing or invalid authentication token.
+
+        "404":
+          description: Course not found.
+
+
+    post:
+      tags:
+        - Classes
+      summary: Create a class session
+      description: Creates a new class session inside a course.
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - name: cursoId
+          in: path
+          required: true
+          description: Course identifier.
+          schema:
+            type: integer
+            example: 1
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClaseRequest"
+
+      responses:
+        "201":
+          description: Class session successfully created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Clase"
+
+        "400":
+          description: Invalid class session data.
+
+        "401":
+          description: Missing or invalid authentication token.
+
+        "403":
+          description: Authenticated user does not have permission to create class sessions.
+
+        "404":
+          description: Course not found.
+
+
+  /clases/{id}:
+    get:
+      tags:
+        - Classes
+      summary: Get a class session
+      description: Returns a class session by its identifier.
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Class session identifier.
+          schema:
+            type: integer
+            example: 1
+
+      responses:
+        "200":
+          description: Class session retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Clase"
+
+        "401":
+          description: Missing or invalid authentication token.
+
+        "404":
+          description: Class session not found.
+
+
+components:
+
+  securitySchemes:
+
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+
+  schemas:
+
+    ClaseRequest:
+      type: object
+      required:
+        - fecha
+      properties:
+        fecha:
+          type: string
+          format: date-time
+          example: "2026-09-26T08:00:00"
+
+
+    Clase:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+
+        cursoId:
+          type: integer
+          example: 1
+
+        fecha:
+          type: string
+          format: date-time
+          example: "2026-09-26T08:00:00"

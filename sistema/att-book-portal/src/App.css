@@ -1,0 +1,65 @@
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  width: min(1100px, calc(100% - 32px));
+  margin-inline: auto;
+}
+
+.app-header {
+  padding-block: 24px;
+  background: #ffffff;
+  border-bottom: 1px solid #dce4ef;
+}
+
+.brand {
+  font-size: 1.35rem;
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.brand-description {
+  margin: 6px 0 0;
+  color: #52647a;
+}
+
+.main-content {
+  flex: 1;
+  padding-block: 48px;
+}
+
+.welcome {
+  padding: clamp(24px, 5vw, 56px);
+  background: #ffffff;
+  border: 1px solid #dce4ef;
+  border-radius: 16px;
+}
+
+.eyebrow {
+  margin-top: 0;
+  color: #1d4ed8;
+  font-weight: 700;
+}
+
+.welcome h1 {
+  max-width: 720px;
+  margin-block: 16px;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.welcome > p:last-child {
+  max-width: 650px;
+  color: #52647a;
+  line-height: 1.7;
+}
+
+.app-footer {
+  padding-block: 24px;
+  color: #52647a;
+  border-top: 1px solid #dce4ef;
+}
