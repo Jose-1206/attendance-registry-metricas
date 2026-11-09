@@ -84,11 +84,13 @@ La herramienta y sus convenciones se documentarán para que la medición sea rep
 
 ### 4.5. Herramienta
 
-Se evaluará una herramienta de análisis estático para Java que proporcione complejidad ciclomática por método.
+Se utilizó **PMD 7.17.0**, integrado mediante `maven-pmd-plugin` versión 3.28.0, para evaluar la complejidad ciclomática del backend Java 17.
 
-Herramienta y versión definitiva: pendientes de validación.
+La configuración se encuentra en `sistema/att-book-api/config/pmd-complejidad.xml`.
 
-No se utilizará WMC como sustituto automático de V(G) por método: se comprobará qué calcula exactamente la herramienta seleccionada.
+El análisis inicial identificó tres infracciones del umbral V(G) ≤ 10. Después de la refactorización, PMD registró cero infracciones.
+
+Las evidencias se conservan en `docs/metricas/pmd-final/` y `docs/metricas/pmd-post-refactor/`.
 
 ### 4.6. Alcance
 
@@ -151,9 +153,13 @@ Este umbral no significa automáticamente que el código sea incorrecto.
 
 ### 5.5. Herramienta
 
-Se utilizará un analizador o script capaz de contar las líneas del código Java.
+Para medir las líneas de código del backend se utilizó **CLOC 2.08**, aplicado a los 43 archivos Java de producción.
 
-La herramienta, su versión y sus criterios de clasificación de líneas serán registrados al realizar las mediciones.
+Se obtuvieron 2.017 líneas de código, 31 líneas de comentarios y 489 líneas en blanco, para un total de 2.537 líneas físicas.
+
+Para analizar la longitud de los métodos se utilizó la columna `loc` del archivo `docs/metricas/ck-post-refactor/method.csv`. Se revisaron 336 registros de métodos y constructores, y no se encontraron métodos no constructores que superaran 50 LOC.
+
+Las evidencias se encuentran en `docs/metricas/loc-final/`.
 
 ### 5.6. Alcance
 
@@ -236,9 +242,13 @@ Los resultados de LCOM solo se compararán con el umbral de 0,7 si se utiliza un
 
 ### 6.5. Herramienta
 
-Se propone utilizar CK para Java.
+Se utilizó la herramienta **CK de Mauricio Aniche** para calcular métricas de diseño orientado a objetos del backend Java.
 
-La versión, el comando de ejecución, los parámetros y los archivos de resultados se registrarán durante la medición.
+Se analizaron 48 clases e interfaces de producción en las mediciones comparables anteriores y posteriores a la refactorización.
+
+Los resultados se conservan en los directorios `docs/metricas/ck-inicial/`, `docs/metricas/ck-final/` y `docs/metricas/ck-post-refactor/`.
+
+La versión exacta de CK debe registrarse a partir del archivo ejecutable utilizado para realizar las mediciones.
 
 ### 6.6. Alcance
 
@@ -279,52 +289,98 @@ Se diferenciará la medición inicial del proyecto reutilizado, la medición del
 
 ## 8. Registro de resultados
 
-Los datos obtenidos se organizarán de acuerdo con el Anexo C de la guía del proyecto.
+Las mediciones se realizaron sobre el backend Java del sistema Attendance Registry.
 
 | Elemento medido | Métrica | Valor obtenido | Umbral | Estado / Acción |
 |---|---|---|---|---|
-| Pendiente | V(G) | Sin medir | ≤ 10 | Pendiente |
-| Pendiente | LOC efectivas por método | Sin medir | ≤ 50 | Pendiente |
-| Pendiente | WMC | Sin medir | ≤ 20 | Pendiente |
-| Pendiente | CBO | Sin medir | ≤ 10 | Pendiente |
-| Pendiente | RFC | Sin medir | ≤ 50 | Pendiente |
-| Pendiente | LCOM* | Sin medir | ≤ 0,7 | Pendiente |
+| Backend después de la refactorización | V(G) | 0 infracciones PMD | ≤ 10 por método | Cumple según PMD |
+| Métodos Java no constructores | LOC por método | 0 métodos con más de 50 LOC | ≤ 50 | Sin alertas según CK |
+| SessionService | WMC | 44 | ≤ 20 | Revisar responsabilidades |
+| AttendanceService | WMC | 24 | ≤ 20 | Revisar complejidad agregada |
+| CourseController | CBO | 19 | ≤ 10 | Revisar dependencias |
+| SessionController | CBO | 19 | ≤ 10 | Revisar dependencias |
+| SessionService | LCOM* | 0,796 | ≤ 0,7 | Revisar cohesión |
+| AttendanceService | LCOM* | 0,764 | ≤ 0,7 | Revisar cohesión |
 
-Los valores se completarán exclusivamente con resultados obtenidos mediante herramientas ejecutadas sobre el código real.
+### 8.1. Resultados globales de LOC
 
-## 9. Comparación antes y después
+La medición se realizó utilizando CLOC versión 2.08 sobre 43 archivos Java de producción.
 
-Cuando se realice una refactorización se registrará:
+| Indicador | Resultado |
+|---|---:|
+| Líneas físicas | 2.537 |
+| Líneas de código | 2.017 |
+| Líneas de comentarios | 31 |
+| Líneas en blanco | 489 |
+| Porcentaje de comentarios | 1,22 % |
+
+El conteo por método se obtuvo del archivo `ck-post-refactor/method.csv`, que contiene 336 registros de métodos y constructores.
+
+Tras excluir los constructores, no se encontraron métodos con LOC superior a 50.
+
+Los resultados reflejan el alcance y los criterios de las herramientas utilizadas.
+
+### 8.2. Interpretación
+
+La evaluación mediante PMD indica que se eliminó la totalidad de las infracciones del umbral de complejidad ciclomática detectadas previamente.
+
+La medición de LOC por método no identificó valores superiores al límite de referencia.
+
+Sin embargo, CK permitió identificar clases con valores elevados de WMC, CBO y LCOM*, que requieren atención desde la perspectiva de mantenibilidad.
+
+Estos indicadores deben utilizarse conjuntamente, ya que cada uno evalúa características diferentes del software.
+
+## 9. Comparación antes y después de la refactorización
 
 | Elemento | Métrica | Antes | Después | Interpretación |
-|---|---|---|---|---|
-| Pendiente | V(G) | Sin medir | Sin medir | Pendiente |
-| Pendiente | LOC | Sin medir | Sin medir | Pendiente |
-| Pendiente | CK | Sin medir | Sin medir | Pendiente |
+|---|---|---:|---:|---|
+| Backend Java | Infracciones V(G) | 3 | 0 | Mejora comprobada |
+| SessionService | WMC | 38 | 44 | Aumento de complejidad agregada |
+| AttendanceService | WMC | 18 | 24 | Aumento de complejidad agregada |
+| SessionService | LCOM* | 0,694 | 0,796 | Mayor falta de cohesión según CK |
+| AttendanceService | LCOM* | 0,520 | 0,764 | Mayor falta de cohesión según CK |
 
-La comparación se realizará utilizando la misma herramienta, versión y configuración, o explicando las diferencias cuando no sea posible mantenerlas.
+### 9.1. Análisis
 
-También se ejecutarán pruebas de regresión para verificar que la refactorización no modifique el comportamiento esperado.
+La refactorización permitió disminuir la complejidad ciclomática de los métodos que superaban RNF-01, mediante la aplicación de la técnica *Extract Method*.
+
+Sin embargo, las métricas CK evidencian que el aumento del número de métodos auxiliares puede repercutir en indicadores agregados como WMC y LCOM*.
+
+Por lo tanto, una mejora en la complejidad de métodos individuales no garantiza una mejora simultánea en todos los indicadores de diseño.
+
+### 9.2. Mejoras propuestas
+
+**Prioridad alta:** revisar la distribución de responsabilidades en SessionService y AttendanceService mediante técnicas como *Extract Class*.
+
+**Prioridad media:** reducir las dependencias de los controladores que presentan valores elevados de CBO.
+
+**Prioridad media:** mejorar la documentación interna de las reglas de negocio complejas.
+
+**Prioridad media:** ampliar los escenarios de pruebas de rendimiento para incluir operaciones de escritura.
+
+Las propuestas deberán evaluarse mediante nuevas mediciones y pruebas de regresión antes de considerar sus beneficios como comprobados.
 
 ## 10. Responsabilidades
 
-**José Miguel Aya Peralta:** organización de la documentación, trazabilidad e integración de evidencias.
+**José Miguel Aya Peralta:** integración y actualización del sistema Attendance Registry, implementación de ajustes funcionales, refactorización de los métodos con complejidad elevada, ejecución de pruebas funcionales y de regresión, actualización de la documentación técnica y organización de las evidencias.
 
-**Luis Fernando Perez Chala:** validación de las herramientas, configuración de las mediciones y análisis inicial de resultados.
+**Luis Fernando Pérez Chala:** configuración y ejecución de las herramientas PMD, CK y CLOC; recopilación de las mediciones iniciales y posteriores; análisis comparativo de complejidad ciclomática, LOC y métricas CK; identificación de problemas de mantenibilidad; elaboración del plan de mejoras priorizado y preparación del informe académico final.
 
-**Andrés Felipe Calle Gonzalez:** identificación de problemas, pruebas de regresión, propuestas de refactorización y comparación de resultados.
+**Andrés Felipe Calle González:** integrante del equipo académico. No se registran contribuciones técnicas verificables en el repositorio para las actividades evaluadas.
 
-Los tres integrantes participarán en la interpretación de las métricas y en la sustentación.
+La sustentación y la presentación de resultados estarán a cargo de los integrantes que participen efectivamente en ella. Las responsabilidades descritas corresponden a las actividades realizadas y a las evidencias disponibles.
 
 ## 11. Estado del documento
 
-**Versión:** 1.0 — Definición inicial.
+**Versión:** 2.0 — Mediciones realizadas y resultados documentados.
 
-**Preparación inicial:** José Miguel Aya Peralta.
+**Fecha de actualización:** 9 de noviembre de 2026.
 
-**Responsable de validación técnica:** Luis Fernando Perez Chala.
+**Responsable del análisis de métricas:** Luis Fernando Pérez Chala.
 
-**Estado:** Pendiente de ejecutar las herramientas y obtener mediciones reales.
+**Estado:** Se completaron las mediciones de complejidad ciclomática, líneas de código (LOC) y métricas CK. Se documentaron los resultados comparativos y se identificaron oportunidades de mejora en la mantenibilidad del backend.
+
+**Evidencias:** `docs/metricas/pmd-final/`, `docs/metricas/pmd-post-refactor/`, `docs/metricas/ck-final/`, `docs/metricas/ck-post-refactor/` y `docs/metricas/loc-final/`.
 
 ## 12. Referencias
 
