@@ -191,9 +191,7 @@ Se agregaron pruebas automatizadas de asistencia, conservando los contratos y la
 - [Registro de versiones integradas](docs/integracion/versiones-origen.md).
 - [Pruebas de integración](docs/pruebas/integration-tests.md).
 
-**Estado de la aplicación:** funcionalidades del alcance RF-01 a RF-10 implementadas y verificadas mediante pruebas manuales. **Estado de la entrega académica:** pendiente de incorporar el informe PDF definitivo y publicar una etiqueta/Release final.
-
-El PDF se incorporará en `docs/` y enlazará desde esta sección cuando Luis Fernando lo termine; no se presenta un enlace inexistente como evidencia.
+**Estado de la aplicación:** funcionalidades del alcance RF-01 a RF-10 implementadas y verificadas mediante pruebas manuales. **Estado de la entrega académica:** [Informe académico final](docs/informe-final/informe-academico-final-sin-nota.pdf)
 
 ## 11. Origen, autoría y licencia
 
