@@ -1,246 +1,204 @@
 # Attendance Registry — Métricas y Estándares de Calidad
 
-## 1. Descripción del proyecto
+## 1. Descripción y propósito
 
-**Attendance Registry**, también conocido como **Att-book**, es un sistema de información para la gestión de asistencia académica.
+**Attendance Registry (Att-book)** es una aplicación web para gestionar cursos, sesiones académicas y asistencia de estudiantes mediante códigos QR. Los docentes administran los cursos y las sesiones, generan códigos QR temporales y consultan los registros; los estudiantes se autentican y registran su asistencia.
 
-El sistema busca facilitar el registro, seguimiento y consulta de la asistencia de estudiantes mediante sesiones académicas y códigos QR.
+Este repositorio corresponde a la evaluación académica de **mantenibilidad y evolución** del sistema para la asignatura **Métricas y Estándares de Calidad**, Corporación Universitaria del Huila (CORHUILA), 2026-B. Se integró una versión del proyecto de Fullstack para medir su calidad interna, realizar una refactorización y comparar resultados.
 
-Este proyecto se desarrolla para la asignatura **Métricas y Estándares de Calidad** de la Corporación Universitaria del Huila (CORHUILA).
+## 2. Equipo y contribuciones
 
-Se reutilizará como base el proyecto Attendance Registry desarrollado en la asignatura de Fullstack, realizando una adaptación independiente para evaluar su mantenibilidad, identificar problemas en el código y proponer mejoras respaldadas por métricas de calidad.
-
-## 2. Objetivo general
-
-Evaluar y mejorar la mantenibilidad del sistema Attendance Registry mediante la aplicación de métricas de calidad de software, identificando problemas de complejidad, tamaño y diseño que permitan proponer refactorizaciones justificadas.
-
-### Objetivos específicos
-
-1. Definir diez requisitos funcionales y tres requisitos no funcionales medibles.
-2. Documentar y justificar la arquitectura de software utilizada.
-3. Verificar el funcionamiento de los módulos principales mediante pruebas.
-4. Aplicar métricas de complejidad ciclomática, líneas de código y diseño orientado a objetos.
-5. Identificar los componentes que superen los umbrales de calidad establecidos.
-6. Proponer mejoras y evaluar su impacto mediante nuevas mediciones.
-
-## 3. Integrantes del equipo
-
-| Integrante | Responsabilidad |
-|---|---|
-| José Miguel Aya Peralta | Gestión del repositorio, requisitos, integración del portal y documentación |
-| Luis Fernando Perez Chala | Arquitectura, base de datos, implementación de sesiones y medición de calidad |
-| Andrés Felipe Calle Gonzalez | Gestión de asistencias, códigos QR, pruebas y refactorización |
-
-Los usuarios de GitHub de cada integrante se registrarán después de verificar sus cuentas.
-
-## 4. Requisitos funcionales
-
-Se han seleccionado los siguientes requisitos para el alcance del proyecto:
-
-| Código | Requisito |
-|---|---|
-| RF-01 | Registrar estudiantes en el sistema |
-| RF-02 | Autenticar usuarios y controlar el acceso según su rol |
-| RF-03 | Crear cursos académicos |
-| RF-04 | Consultar los cursos asociados a un docente |
-| RF-05 | Actualizar la información de un curso |
-| RF-06 | Crear sesiones académicas |
-| RF-07 | Consultar las sesiones asociadas a un curso |
-| RF-08 | Generar códigos QR temporales para registrar asistencia |
-| RF-09 | Registrar la asistencia mediante un código QR válido |
-| RF-10 | Consultar reportes de asistencia por sesión académica |
-
-Estos requisitos forman parte del alcance propuesto. Algunos ya existen en el proyecto original y otros se encuentran pendientes de implementación.
-
-Los criterios de aceptación, estados y pruebas se documentarán en `docs/requisitos/requisitos.md`.
-
-## 5. Requisitos no funcionales
-
-| Código | Categoría | Criterio propuesto |
+| Integrante | Usuario de GitHub | Contribución verificable en este repositorio |
 |---|---|---|
-| RNF-01 | Mantenibilidad | Los métodos del backend deben tener una complejidad ciclomática menor o igual a 10 en el alcance final definido |
-| RNF-02 | Seguridad | El 100 % de los endpoints protegidos debe rechazar accesos sin autorización según su política de seguridad |
-| RNF-03 | Rendimiento | El percentil 95 de las respuestas de los endpoints críticos debe ser menor o igual a 2 segundos bajo una carga de prueba documentada |
+| José Miguel Aya Peralta | [Jose-1206](https://github.com/Jose-1206) | Requisitos, integración del sistema, validación funcional, seguridad y rendimiento, refactorización RNF-01 y pruebas de asistencia |
+| Luis Fernando Perez Chala | [luisfernando-77](https://github.com/luisfernando-77) | Medición y análisis de PMD, CK y LOC, comparaciones, documentación de métricas y consolidación de pruebas del backend |
+| Andrés Felipe Calle Gonzalez | AndresCalle09 | Integrante registrado; sin commits propios identificados en el historial de este repositorio a la fecha de esta revisión |
 
-El cumplimiento de estos criterios se determinará mediante mediciones y pruebas reproducibles.
+Las contribuciones deben acreditarse mediante commits y Pull Requests; los roles anteriores describen el trabajo verificable en el repositorio académico, no necesariamente la autoría de todos los componentes del proyecto original.
 
-## 6. Arquitectura del sistema
+## 3. Requisitos
 
-La arquitectura preliminar está basada en un backend organizado por capas y un portal web que consume sus servicios mediante una API REST.
+Se definieron **10 requisitos funcionales** (RF-01 a RF-10) y **3 requisitos no funcionales** (RNF-01 a RNF-03). Los diez RF fueron reportados como aprobados en las pruebas funcionales manuales del sistema integrado.
 
-Se identifican los siguientes componentes:
+| Código | Requisito | Resultado documentado |
+|---|---|---|
+| RF-01 | Registro de estudiantes | PASS |
+| RF-02 | Autenticación y control de roles | PASS |
+| RF-03 | Creación de cursos | PASS |
+| RF-04 | Consulta de cursos del docente | PASS |
+| RF-05 | Actualización de cursos | PASS |
+| RF-06 | Creación de sesiones académicas | PASS |
+| RF-07 | Consulta de sesiones | PASS |
+| RF-08 | Generación de códigos QR temporales | PASS |
+| RF-09 | Registro de asistencia con QR | PASS |
+| RF-10 | Consulta de asistencias por sesión | PASS |
 
-- **Presentación:** interfaz web para docentes y estudiantes.
-- **Controladores:** recepción y validación de solicitudes HTTP.
-- **Servicios:** lógica de negocio y reglas del sistema.
-- **Persistencia:** repositorios y entidades para el almacenamiento de información.
-- **Base de datos:** almacenamiento persistente de usuarios, cursos, sesiones y asistencias.
+| Código | Criterio | Evidencia y alcance |
+|---|---|---|
+| RNF-01 | V(G) ≤ 10 para los métodos del backend incluidos en el análisis | PMD 7.17.0: **3 infracciones antes, 0 después** de la refactorización; cumple según el ruleset utilizado |
+| RNF-02 | Rechazo de accesos no autorizados | **40/40 escenarios definidos** aprobados; las pruebas no constituyen una auditoría integral de seguridad |
+| RNF-03 | Percentil 95 (P95) ≤ 2000 ms | Prueba k6 con 20 usuarios virtuales, cuatro endpoints GET y 400 comprobaciones exitosas; P95 HTTP global de **110,85 ms**, válido para ese entorno de prueba |
 
-La arquitectura definitiva, su justificación y sus diagramas se documentarán en `docs/arquitectura/arquitectura.md`.
+Ver [requisitos, criterios de aceptación y matriz de trazabilidad](docs/requisitos/requisitos.md).
 
-## 7. Tecnologías
+## 4. Arquitectura y tecnologías
 
-El proyecto original utiliza las siguientes tecnologías:
+Arquitectura **cliente-servidor con backend monolítico modular organizado en capas**:
 
-| Componente | Tecnología |
-|---|---|
-| Backend | Java y Spring Boot |
-| Frontend | React y TypeScript |
-| Base de datos | PostgreSQL |
-| Control de versiones | Git y GitHub |
-| Pruebas backend | JUnit |
-| Pruebas frontend | Vitest |
-| Construcción backend | Maven |
-| Construcción frontend | Node.js y npm |
+- **Frontend:** React y TypeScript, interfaz de docentes y estudiantes.
+- **API REST:** Java 17 y Spring Boot, controladores y reglas de negocio.
+- **Seguridad:** Spring Security y JWT, autenticación y autorización.
+- **Persistencia:** Spring Data JPA y PostgreSQL 17.
+- **Infraestructura:** Docker Compose; portal servido con Nginx.
+- **Pruebas:** JUnit y Mockito en backend, Vitest en frontend; k6 para rendimiento.
+- **Métricas:** PMD 7.17.0, CK de Mauricio Aniche y conteo de LOC con PowerShell.
 
-Se confirmará con el docente el alcance de los lenguajes de programación que se conservarán para esta asignatura.
+Se utiliza Java en el backend por su orientación a objetos y por la posibilidad de aplicar CK y PMD; TypeScript con React permite desarrollar y verificar la interfaz. PostgreSQL permite persistencia relacional y restricciones de integridad.
 
-## 8. Métricas de calidad
+El diagrama, módulos, decisiones y compromisos están en [docs/arquitectura/arquitectura.md](docs/arquitectura/arquitectura.md).
 
-Se utilizarán tres grupos de métricas de mantenibilidad:
-
-### 8.1. Complejidad ciclomática — V(G)
-
-Permite analizar la cantidad de caminos lógicamente independientes dentro de un método.
-
-Umbrales de referencia:
-
-- 1 a 10: riesgo bajo.
-- 11 a 20: riesgo moderado.
-- 21 a 50: riesgo alto.
-- Más de 50: riesgo muy alto.
-
-### 8.2. Líneas de código — LOC
-
-Permite evaluar el tamaño de los componentes y métodos.
-
-Se analizarán las líneas físicas, efectivas, en blanco y los comentarios.
-
-Como referencia, los métodos con más de 50 líneas efectivas requerirán revisión.
-
-### 8.3. Suite CK
-
-Se analizarán métricas de diseño orientado a objetos, incluyendo:
-
-- WMC: complejidad ponderada de los métodos.
-- DIT: profundidad del árbol de herencia.
-- NOC: número de clases hijas.
-- CBO: acoplamiento entre clases.
-- RFC: respuesta potencial de una clase.
-- LCOM: cohesión de los métodos.
-
-La herramienta, la fórmula o implementación utilizada, los umbrales y los resultados reales se documentarán en `docs/metricas/`.
-
-## 9. Estrategia de evaluación
-
-El proceso de calidad seguirá las siguientes etapas:
-
-1. Establecer una versión inicial del código.
-2. Ejecutar las pruebas disponibles.
-3. Aplicar métricas de mantenibilidad.
-4. Comparar los resultados con los umbrales definidos.
-5. Identificar los componentes con posibles problemas.
-6. Priorizar mejoras según su riesgo y esfuerzo.
-7. Implementar al menos una refactorización, cuando sea viable.
-8. Ejecutar nuevamente las pruebas y métricas.
-9. Comparar los resultados antes y después.
-
-Las mediciones deberán conservarse como evidencia y podrán reproducirse utilizando los comandos documentados.
-
-## 10. Pruebas
-
-Se utilizarán pruebas para verificar el comportamiento de los requisitos principales.
-
-Se contemplan:
-
-- Pruebas unitarias.
-- Pruebas de integración.
-- Pruebas de autenticación y autorización.
-- Pruebas funcionales.
-- Pruebas de regresión después de las refactorizaciones.
-
-Las evidencias estarán disponibles en `docs/pruebas/` y `docs/evidencias/`.
-
-## 11. Instalación y ejecución
-
-Las instrucciones de instalación se completarán después de integrar y validar el código del proyecto.
-
-Se documentarán:
-
-1. Herramientas y versiones necesarias.
-2. Configuración de variables de entorno.
-3. Preparación de la base de datos.
-4. Ejecución del backend.
-5. Ejecución del portal.
-6. Comandos para ejecutar pruebas.
-7. Comandos para calcular las métricas.
-
-No se incluirán contraseñas ni claves privadas en el repositorio.
-
-## 12. Organización del repositorio
-
-La estructura inicial es:
+## 5. Organización del repositorio
 
 ```text
 attendance-registry-metricas/
 ├── README.md
 ├── docs/
-│   ├── requisitos/
-│   │   └── requisitos.md
-│   ├── arquitectura/
-│   │   └── arquitectura.md
+│   ├── arquitectura/arquitectura.md
+│   ├── requisitos/requisitos.md
 │   ├── metricas/
-│   │   └── definicion-metricas.md
+│   │   ├── definicion-metricas.md
+│   │   ├── informe-comparativo-final.md
+│   │   ├── ck-inicial/           # Medición de la base inicial
+│   │   ├── ck-final/             # Estado integrado antes de refactorizar
+│   │   ├── ck-post-refactor/     # Estado posterior a refactorizar
+│   │   ├── pmd-final/
+│   │   └── pmd-post-refactor/
 │   ├── pruebas/
-│   └── evidencias/
-└── .gitignore
+│   │   ├── integration-tests.md
+│   │   ├── seguridad/
+│   │   └── rendimiento/
+│   └── integracion/versiones-origen.md
+└── sistema/
+    ├── att-book-api/
+    ├── att-book-db/
+    ├── att-book-infra/
+    ├── att-book-portal/
+    └── att-book-docs/
 ```
 
-Posteriormente se incorporará el código fuente de la aplicación y las herramientas de medición.
+## 6. Instalación y ejecución local
 
-## 13. Mejoras propuestas
+**Requisitos:** Git, Docker Desktop con Docker Compose y puertos locales disponibles. Para ejecutar las herramientas fuera de Docker se requieren Java 17 y Node.js/npm.
 
-Las mejoras se definirán a partir de los resultados reales de las métricas.
+1. Clonar este repositorio y entrar al directorio de infraestructura:
 
-Entre las técnicas que podrán evaluarse se encuentran:
+   ```powershell
+   git clone https://github.com/Jose-1206/attendance-registry-metricas.git
+   cd attendance-registry-metricas/sistema/att-book-infra
+   ```
 
-- Extraer métodos para reducir la complejidad.
-- Dividir clases con múltiples responsabilidades.
-- Reducir el acoplamiento entre componentes.
-- Mejorar la organización de servicios.
-- Eliminar duplicaciones innecesarias.
-- Incrementar las pruebas de regresión.
+2. Crear un archivo `.env` **local, no versionado**, dentro de `att-book-infra`, con dos variables:
 
-Las propuestas no se presentarán como defectos confirmados hasta contar con evidencia.
+   ```dotenv
+   DB_PASSWORD=CAMBIAR_POR_CONTRASENA_LOCAL_SEGURA
+   JWT_SECRET=CAMBIAR_POR_SECRETO_VALIDO_LOCAL
+   ```
 
-## 14. Estado del proyecto
+   Usar valores personales para pruebas. La clave JWT debe respetar el formato y longitud aceptados por la API. No publicar credenciales o tokens.
 
-**Estado:** En desarrollo.
+3. Levantar los tres servicios:
 
-Actualmente se está realizando la configuración inicial, la definición de requisitos y la preparación de la documentación.
+   ```powershell
+   docker compose -f compose.fullstack.yaml up -d --build
+   docker compose -f compose.fullstack.yaml ps
+   ```
 
-Los resultados de las métricas y la evaluación final se incorporarán cuando se complete el análisis del código.
+4. Abrir el portal en **http://localhost:8086**. Para preparar datos de demostración, seguir el orden de scripts de semillas documentado en [`sistema/att-book-infra/README.md`](sistema/att-book-infra/README.md).
 
-## 15. Informe final
+5. Para consultar errores de la API:
 
-El informe académico estará disponible en la carpeta `docs/` una vez finalizado.
+   ```powershell
+   docker compose -f compose.fullstack.yaml logs --tail=60 api
+   ```
 
-Contendrá los requisitos, la arquitectura, las métricas, los resultados, el análisis, las mejoras y los aportes individuales.
+6. Para detener sin borrar la base de datos:
 
-## 16. Origen y licencia
+   ```powershell
+   docker compose -f compose.fullstack.yaml down
+   ```
 
-El proyecto se basa en Attendance Registry (Att-book), desarrollado originalmente en la asignatura de Fullstack.
+   **No usar `down -v`** si se deben conservar los datos.
 
-Antes de incorporar el código original se verificará la autorización para reutilizarlo y se conservará el reconocimiento de sus autores.
+## 7. Pruebas y reproducibilidad
 
-La licencia de esta adaptación se definirá de acuerdo con los permisos del proyecto original.
+Desde `sistema/att-book-portal`:
 
-## 17. Contexto académico
+```powershell
+npm ci
+npm test
+npm run lint
+npm run build
+```
 
-**Institución:** Corporación Universitaria del Huila — CORHUILA
+Desde `sistema/att-book-api`:
 
-**Asignatura:** Métricas y Estándares de Calidad
+```powershell
+.\mvnw.cmd -B test
+.\mvnw.cmd -B pmd:pmd
+.\mvnw.cmd -B pmd:check
+```
 
-**Docente:** José Miguel Llanos Mosquera
+La prueba de arranque `AttBookApiApplicationTests.contextLoads` requiere una **base de datos de pruebas PostgreSQL configurada**, con las variables de entorno `DB_URL`, `DB_USERNAME`, `DB_PASSWORD` y `JWT_SECRET`. No se debe ejecutar contra una base con datos que se quieran conservar. El comando Maven anterior funcionará cuando estas dependencias estén configuradas; consultar [informe de métricas](docs/metricas/informe-comparativo-final.md) para el resultado documentado.
 
-**Proyecto:** Evaluación de mantenibilidad y evolución de Attendance Registry
+**Resultados documentados:** 134/134 pruebas de backend exitosas con entorno configurado, 27/27 pruebas de frontend exitosas, 10/10 pruebas funcionales manuales exitosas. Oxlint informó 0 errores y 1 advertencia; la compilación del frontend fue exitosa.
+
+Las evidencias de las pruebas están en [docs/pruebas/integration-tests.md](docs/pruebas/integration-tests.md), [RNF-02](docs/pruebas/seguridad/informe-rnf-02.md) y [RNF-03](docs/pruebas/rendimiento/informe-rnf-03.md).
+
+## 8. Métricas y resultados
+
+El alcance principal de medición es el código Java de producción en `sistema/att-book-api/src/main/java`. El portal web se evaluó adicionalmente con pruebas y lint, pero no se incluyó en la suite CK.
+
+| Métrica | Resultado registrado |
+|---|---|
+| Complejidad ciclomática PMD | 3 infracciones antes y 0 después de la refactorización |
+| LOC física | 1028 líneas en la base inicial y 2473 en la versión funcional ampliada; son **versiones de distinto alcance** |
+| CK: WMC medio | 4,79 antes; 5,04 después de la refactorización |
+| CK: CBO medio | 5,60 antes; 5,60 después |
+| CK: RFC medio | 5,62 antes; 5,88 después |
+| CK: LCOM no normalizado medio | 2,56 antes; 4,94 después |
+
+**Nota:** la disminución de V(G) por método no implica automáticamente mejorar el diseño completo. Según `class.csv`, `SessionService` y `AttendanceService` superan el umbral de WMC tras la refactorización, y varias clases presentan acoplamiento CBO elevado. Para comparar con el umbral 0,7 debe utilizarse **LCOM\*** normalizado, no el LCOM bruto.
+
+La descripción de métricas y los datos fuente se encuentran en [docs/metricas/](docs/metricas/) y el [informe comparativo](docs/metricas/informe-comparativo-final.md).
+
+## 9. Refactorización y mejoras propuestas
+
+En el PR [#6](https://github.com/Jose-1206/attendance-registry-metricas/pull/6) se aplicó **Extract Method** en:
+
+- `SessionService.validateRequest` (PMD inicial: V(G)=17).
+- `AttendanceService.registerAttendance` (PMD inicial: V(G)=15).
+- `SessionService.requireCourseAccess` (PMD inicial: V(G)=11).
+
+Se agregaron pruebas automatizadas de asistencia, conservando los contratos y las validaciones. El reporte PMD posterior registró cero infracciones con el umbral configurado.
+
+**Próximas mejoras, no implementadas en esta entrega:** evaluar extracción de clases/responsabilidades en `SessionService` y `AttendanceService`, disminuir dependencias de controladores con CBO elevado, ampliar las pruebas de autorización por recurso y rendimiento de operaciones de escritura, y revisar la advertencia de React y el tamaño de bundle del portal.
+
+## 10. Resultados, informe y estado
+
+- [Informe comparativo de métricas](docs/metricas/informe-comparativo-final.md).
+- [Requisitos y trazabilidad](docs/requisitos/requisitos.md).
+- [Arquitectura](docs/arquitectura/arquitectura.md).
+- [Registro de versiones integradas](docs/integracion/versiones-origen.md).
+- [Pruebas de integración](docs/pruebas/integration-tests.md).
+
+**Estado de la aplicación:** funcionalidades del alcance RF-01 a RF-10 implementadas y verificadas mediante pruebas manuales. **Estado de la entrega académica:** pendiente de incorporar el informe PDF definitivo y publicar una etiqueta/Release final.
+
+El PDF se incorporará en `docs/` y enlazará desde esta sección cuando Luis Fernando lo termine; no se presenta un enlace inexistente como evidencia.
+
+## 11. Origen, autoría y licencia
+
+Esta adaptación reutiliza componentes de **Attendance Registry** desarrollados previamente en el curso de Fullstack. Los commits de referencia de cada módulo se identifican en [docs/integracion/versiones-origen.md](docs/integracion/versiones-origen.md).
+
+Los repositorios de origen se identifican como privados. **La presencia del código aquí no prueba por sí sola que su publicación pública esté autorizada.** Se debe verificar la autorización de los titulares y acordar la licencia adecuada antes de declarar libertad de redistribución. No se declara una licencia que no exista.
+
+**Asignatura:** Métricas y Estándares de Calidad. **Docente:** José Miguel Llanos Mosquera. **Institución:** CORHUILA.

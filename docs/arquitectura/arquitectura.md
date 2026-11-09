@@ -1,46 +1,27 @@
 # Arquitectura del sistema — Attendance Registry
 
-## 1. Introducción
+**Versión:** 2.0, sistema integrado y evaluado (9 de noviembre de 2026)  
+**Asignatura:** Métricas y Estándares de Calidad — CORHUILA  
+**Documentación:** José Miguel Aya Peralta; análisis de métricas: Luis Fernando Perez Chala.
 
-Este documento presenta la arquitectura de software de Attendance Registry (Att-book), utilizado como base para el proyecto final de la asignatura Métricas y Estándares de Calidad.
+## 1. Propósito y tipo de arquitectura
 
-La arquitectura permite identificar los componentes del sistema, sus responsabilidades, las relaciones entre módulos y su impacto sobre la mantenibilidad del código.
+Attendance Registry (Att-book) gestiona cursos, sesiones, códigos QR y asistencias académicas. Utiliza una arquitectura **cliente-servidor**: un portal web consume una API REST. El backend es un **monolito modular organizado en capas** que centraliza reglas de negocio y persistencia.
 
-La descripción diferencia los componentes existentes en la versión revisada del proyecto Fullstack y los componentes pendientes para completar el alcance de Métricas.
+La solución integrada incluye los módulos de identidad, cursos, sesiones, generación de códigos QR y asistencias. No son componentes pendientes de construcción dentro del alcance RF-01 a RF-10.
 
-## 2. Arquitectura seleccionada
+## 2. Justificación de las tecnologías
 
-Se selecciona una **arquitectura cliente-servidor con un backend monolítico modular organizado en capas**.
+- **Java 17 y Spring Boot:** aplicación de reglas de negocio en clases y servicios; posibilidad de medición con PMD y CK, JUnit y Mockito.
+- **React y TypeScript:** interfaz web para estudiantes y docentes; componentes verificables con Vitest y herramientas de análisis estático.
+- **Spring Security y JWT:** autenticación y control de acceso a los endpoints.
+- **Spring Data JPA:** acceso a datos y repositorios del backend.
+- **PostgreSQL 17:** persistencia relacional de usuarios, cursos, sesiones, códigos QR y asistencia.
+- **Docker Compose y Nginx:** reproducibilidad del entorno local y publicación del portal web.
 
-El sistema se compone de:
+La elección conserva el stack del proyecto original de Fullstack. Para este proyecto académico se evalúa principalmente la mantenibilidad del backend Java; el portal se verifica con pruebas y lint, pero no se incluye en la medición CK.
 
-- Un portal web para la interacción con docentes y estudiantes.
-- Una API REST encargada de atender las solicitudes.
-- Una capa de servicios para procesar las reglas de negocio.
-- Una capa de persistencia para acceder a los datos.
-- Una base de datos relacional PostgreSQL.
-
-El backend utiliza Java y Spring Boot. El portal utiliza React y TypeScript.
-
-Esta combinación corresponde a las tecnologías encontradas en el proyecto original. Su conservación deberá ser validada con el docente, considerando el requisito académico de definir y justificar el lenguaje utilizado.
-
-## 3. Justificación de la arquitectura
-
-La arquitectura seleccionada se considera adecuada porque:
-
-1. **Separación de responsabilidades:** permite distinguir la presentación, los controladores, la lógica de negocio y la persistencia.
-
-2. **Mantenibilidad:** facilita identificar componentes que necesitan refactorización sin modificar necesariamente todas las capas.
-
-3. **Organización modular:** permite agrupar las funcionalidades relacionadas con identidad, cursos, sesiones y asistencias.
-
-4. **Facilidad para realizar pruebas:** los servicios y controladores pueden verificarse de forma independiente mediante pruebas unitarias y de integración.
-
-5. **Reutilización:** permite aprovechar los componentes existentes de Attendance Registry y extender las funcionalidades pendientes.
-
-6. **Análisis de calidad:** facilita aplicar métricas de complejidad, tamaño y diseño sobre clases y métodos concretos.
-
-## 4. Diagrama de arquitectura
+## 3. Diagrama de arquitectura
 
 ```mermaid
 flowchart TD
@@ -49,220 +30,99 @@ flowchart TD
     SG["Seguridad - Spring Security y JWT"]
     C["Controladores REST - Spring Boot"]
     S["Servicios de negocio"]
-    R["Repositorios JPA"]
-    BD[("PostgreSQL")]
+    R["Repositorios Spring Data JPA"]
+    BD[("PostgreSQL 17")]
 
     U --> P
-    P -->|"Solicitudes HTTP / API REST"| SG
+    P -->|"API REST / HTTP"| SG
     SG --> C
     C --> S
     S --> R
     R --> BD
 ```
 
-El diagrama representa la organización lógica de la aplicación.
+El portal envía las solicitudes HTTP. Spring Security verifica la autenticación y aplica las políticas correspondientes. Los controladores invocan servicios con reglas de negocio; los repositorios acceden a PostgreSQL.
 
-El portal envía solicitudes a la API. Spring Security aplica las reglas de autenticación y autorización; las solicitudes permitidas son atendidas por controladores, servicios y repositorios.
+## 4. Componentes y responsabilidades
 
-## 5. Descripción de las capas
+| Capa o módulo | Componentes representativos | Responsabilidad | Estado |
+|---|---|---|---|
+| Portal | React, TypeScript | Registro, autenticación, cursos, sesiones, QR, asistencia e historial | Implementado |
+| Identidad | `AuthController`, `IdentityService`, `SecurityConfig` | Usuarios, autenticación y roles | Implementado |
+| Cursos | `CourseController`, `CourseService` | Crear, consultar y actualizar cursos | Implementado |
+| Sesiones | `SessionController`, `SessionService` | Crear, modificar, consultar y eliminar sesiones con control de acceso | Implementado |
+| QR | `QrController` y componentes en `academic/sessions/qr` | Generar y validar códigos temporales | Implementado |
+| Asistencias | `AttendanceController`, `AttendanceService` | Registro mediante QR, detección de duplicados y consultas | Implementado |
+| Persistencia | Repositorios JPA y entidades de dominio | Consultas, almacenamiento y asociaciones | Implementado |
+| Infraestructura | Docker Compose, PostgreSQL, Nginx | Entorno local integrado | Implementado |
 
-### 5.1. Capa de presentación
+El código y las pruebas se encuentran principalmente en `sistema/att-book-api/src/main/java`, `sistema/att-book-api/src/test/java` y `sistema/att-book-portal`.
 
-**Tecnología:** React y TypeScript.
-
-Responsabilidades:
-
-- Presentar las pantallas de la aplicación.
-- Capturar y validar información de formularios.
-- Consumir los endpoints de la API.
-- Mostrar los resultados y mensajes al usuario.
-- Administrar el estado de la interfaz.
-
-En la versión revisada se encontraron pantallas de autenticación y gestión de cursos.
-
-Las pantallas completas de sesiones, códigos QR y asistencias forman parte del alcance pendiente.
-
-### 5.2. Capa de seguridad
-
-**Tecnología:** Spring Security y JWT.
-
-Responsabilidades:
-
-- Validar la autenticación.
-- Aplicar restricciones de acceso.
-- Verificar los permisos según el rol.
-- Proteger los recursos privados.
-
-En el código revisado existe `SecurityConfig` y lógica relacionada con JWT.
-
-La seguridad de los nuevos módulos deberá comprobarse mediante pruebas.
-
-### 5.3. Capa de controladores
-
-**Tecnología:** Spring Boot REST.
-
-Responsabilidades:
-
-- Recibir solicitudes HTTP.
-- Aplicar validaciones de entrada.
-- Invocar los servicios correspondientes.
-- Devolver las respuestas y códigos HTTP.
-
-Controladores identificados en la versión revisada:
-
-- `AuthController`
-- `CurrentUserController`
-- `CourseController`
-
-Los controladores de sesiones y asistencias se incorporarán durante el desarrollo pendiente.
-
-### 5.4. Capa de servicios
-
-Responsabilidades:
-
-- Implementar las reglas de negocio.
-- Coordinar las operaciones del sistema.
-- Aplicar verificaciones y restricciones funcionales.
-- Comunicarse con los repositorios de persistencia.
-
-Servicios identificados:
-
-- `IdentityService`
-- `CourseService`
-
-Se propone incorporar servicios para gestionar sesiones, códigos QR y asistencias.
-
-### 5.5. Capa de persistencia
-
-**Tecnología:** Spring Data JPA.
-
-Responsabilidades:
-
-- Consultar entidades.
-- Guardar y actualizar registros.
-- Ejecutar operaciones de persistencia.
-- Mantener las relaciones entre entidades.
-
-### 5.6. Base de datos
-
-**Tecnología prevista:** PostgreSQL.
-
-La versión revisada contiene entidades relacionadas con usuarios y cursos.
-
-El alcance final también requiere persistir sesiones académicas, códigos QR y registros de asistencia.
-
-Las migraciones y restricciones de base de datos se documentarán cuando sean implementadas.
-
-## 6. Organización modular
-
-La organización funcional del backend contempla los siguientes módulos:
-
-| Módulo | Responsabilidad | Estado identificado |
-|---|---|---|
-| Identidad | Registro, autenticación, roles y usuarios | Implementado parcialmente |
-| Cursos | Creación, consulta y actualización de cursos | Implementado |
-| Sesiones | Creación y consulta de sesiones académicas | Pendiente |
-| Códigos QR | Generación y validación de códigos temporales | Pendiente |
-| Asistencias | Registro de asistencias y reportes | Pendiente |
-
-Estos módulos corresponden a responsabilidades lógicas. Los nombres definitivos de paquetes y clases se establecerán durante la implementación.
-
-## 7. Relación con los requisitos funcionales
+## 5. Trazabilidad arquitectónica
 
 | Requisito | Módulo principal |
 |---|---|
-| RF-01 | Identidad |
-| RF-02 | Identidad y seguridad |
-| RF-03 | Cursos |
-| RF-04 | Cursos |
-| RF-05 | Cursos |
-| RF-06 | Sesiones |
-| RF-07 | Sesiones |
-| RF-08 | Códigos QR |
-| RF-09 | Asistencias y códigos QR |
-| RF-10 | Asistencias y reportes |
+| RF-01 y RF-02 | Identidad y seguridad |
+| RF-03 a RF-05 | Cursos |
+| RF-06 y RF-07 | Sesiones |
+| RF-08 | QR y sesiones |
+| RF-09 | Asistencias, QR e inscripciones |
+| RF-10 | Asistencias y sesiones |
+| RNF-01 | Servicios y métodos Java evaluados por PMD |
+| RNF-02 | Autenticación, autorización y controladores protegidos |
+| RNF-03 | API REST y despliegue de prueba |
 
-Esta relación será complementada con las clases, métodos y pruebas concretas cuando se complete la implementación.
+Consultar la [matriz completa de requisitos](../requisitos/requisitos.md) y las [pruebas de integración](../pruebas/integration-tests.md).
 
-## 8. Relación de la arquitectura con la mantenibilidad
+## 6. Decisiones, ventajas y compromisos
 
-La arquitectura permite evaluar la calidad del código a diferentes niveles.
+**Ventajas.** Las capas ayudan a localizar responsabilidades, aislar pruebas y aplicar refactorizaciones sin rediseñar toda la aplicación. El monolito modular es apropiado para el tamaño del proyecto y reduce la complejidad de despliegue frente a una arquitectura distribuida.
 
-### 8.1. Complejidad ciclomática
+**Compromisos.** Un cambio en los contratos REST puede requerir ajustes en el portal. Los servicios y controladores pueden acumular responsabilidades y dependencias; la separación en capas no garantiza automáticamente bajo acoplamiento. La necesidad de manejar distintas herramientas para frontend y backend añade coordinación técnica.
 
-Se aplicará principalmente a los métodos de los controladores y servicios del backend.
+## 7. Evolución y métricas de mantenibilidad
 
-Permitirá detectar métodos con un número elevado de decisiones, validaciones o caminos de ejecución.
+El análisis del backend se basó en **complejidad ciclomática (PMD), líneas de código (LOC) y CK**. Después de integrar el sistema, PMD informó tres métodos con V(G) superior a 10:
 
-### 8.2. Líneas de código
+| Método | V(G) antes |
+|---|---:|
+| `SessionService.validateRequest` | 17 |
+| `AttendanceService.registerAttendance` | 15 |
+| `SessionService.requireCourseAccess` | 11 |
 
-Se analizará el tamaño de las clases y métodos del backend, con especial atención a los componentes que concentren demasiadas responsabilidades.
+En el PR [#6](https://github.com/Jose-1206/attendance-registry-metricas/pull/6) se aplicó **Extract Method**, preservando las validaciones y la intención de las respuestas HTTP. El informe PMD posterior presenta **0 infracciones**, con pruebas automatizadas de asistencia incorporadas.
 
-### 8.3. Suite CK
+Las métricas CK muestran que esta mejora de complejidad local no equivale a una reducción de complejidad total por clase:
 
-Se utilizará para estudiar propiedades del diseño orientado a objetos, entre ellas:
+- `SessionService`: WMC 38 → 44 y LCOM* 0,694 → 0,796.
+- `AttendanceService`: WMC 18 → 24 y LCOM* 0,520 → 0,764.
+- `CourseController` y `SessionController`: CBO de 19 en la versión posterior.
 
-- Complejidad ponderada de clases.
-- Acoplamiento.
-- Cohesión.
-- Profundidad de herencia.
-- Respuesta potencial de las clases.
+Estos resultados justifican estudiar futuras separaciones de responsabilidades y simplificación de dependencias. Son señales de mantenibilidad, **no defectos de ejecución confirmados**. No se realizaron nuevas extracciones de clase en esta entrega.
 
-Las métricas permitirán identificar posibles problemas de diseño y fundamentar propuestas de mejora.
+## 8. Pruebas y alcance de la validación
 
-## 9. Ventajas y compromisos de la arquitectura
+El proyecto registra **10/10 requisitos funcionales aprobados** en pruebas manuales, **27/27 pruebas de frontend aprobadas** y **134/134 pruebas automatizadas de backend aprobadas** en el entorno configurado por el equipo. Para RNF-02 se documentaron 40 escenarios de seguridad aprobados; para RNF-03, una prueba de cuatro endpoints GET con k6 y P95 global de 110,85 ms.
 
-### Ventajas
+Las pruebas de seguridad y carga se limitan a los escenarios documentados. No equivalen a una auditoría de seguridad integral ni a una evaluación de rendimiento en producción.
 
-- Organización clara de responsabilidades.
-- Posibilidad de realizar pruebas por componentes.
-- Facilidad para localizar código que requiere mantenimiento.
-- Reutilización de los componentes ya desarrollados.
-- Posibilidad de evolucionar el sistema de forma progresiva.
+## 9. Próximas mejoras priorizadas
 
-### Compromisos
+| Prioridad | Hallazgo | Posible mejora | Impacto esperado |
+|---|---|---|---|
+| Alta | WMC y LCOM* elevados en `SessionService` | Evaluar **Extract Class** y reorganizar responsabilidades | Mejor cohesión y distribución de métodos |
+| Alta | WMC y LCOM* elevados en `AttendanceService` | Separar reglas de QR, autorización y registro cuando compense | Mejor modularidad |
+| Media | CBO elevado en controladores | Revisar dependencias y reducir acoplamiento | Menor efecto de cambios entre módulos |
+| Media | Pruebas de carga solo sobre GET | Ampliar escenarios de escritura y QR | Mayor confianza bajo otras cargas |
+| Media | Advertencia de React y bundle de Vite | Revisar efecto de React y división del código | Mejor mantenibilidad y tamaño de carga |
 
-- Las modificaciones de contratos REST requieren coordinación entre el portal y la API.
-- Una separación incorrecta entre capas puede aumentar el acoplamiento.
-- El crecimiento del monolito requiere disciplina en la organización de módulos.
-- La utilización de tecnologías diferentes en frontend y backend incrementa las herramientas que debe manejar el equipo.
+El esfuerzo e impacto exactos de estas propuestas deben comprobarse mediante una nueva iteración de implementación y medición; no se presentan mejoras futuras como ya logradas.
 
-## 10. Mejoras arquitectónicas por evaluar
+## 10. Referencias de implementación
 
-Las siguientes son oportunidades de análisis y no defectos confirmados por métricas:
+- [Informe comparativo de métricas](../metricas/informe-comparativo-final.md).
+- [Requisitos y trazabilidad](../requisitos/requisitos.md).
+- [Pruebas funcionales y de integración](../pruebas/integration-tests.md).
+- [Origen y versiones de código](../integracion/versiones-origen.md).
 
-1. Revisar los métodos que concentren demasiadas validaciones.
-2. Identificar clases con responsabilidades excesivas.
-3. Evaluar las dependencias entre servicios.
-4. Reducir duplicaciones cuando existan evidencias.
-5. Mejorar la separación de responsabilidades en componentes extensos.
-6. Incrementar las pruebas automatizadas de los módulos principales.
-
-Las mejoras definitivas se seleccionarán después de obtener las mediciones iniciales.
-
-## 11. Estrategia de evolución
-
-El proceso de evolución seguirá las etapas:
-
-1. Registrar el estado inicial del código.
-2. Ejecutar las pruebas existentes.
-3. Aplicar las métricas de mantenibilidad.
-4. Detectar componentes que superen los umbrales.
-5. Seleccionar mejoras justificadas.
-6. Aplicar las refactorizaciones elegidas.
-7. Ejecutar nuevamente las pruebas.
-8. Comparar los valores antes y después.
-
-El comportamiento funcional deberá conservarse durante las refactorizaciones.
-
-## 12. Estado del documento
-
-**Versión:** 1.0 — Arquitectura preliminar.
-
-**Responsable de validación técnica:** Luis Fernando Perez Chala.
-
-**Preparación inicial:** José Miguel Aya Peralta.
-
-**Estado:** Pendiente de validación final contra el código integrado.
-
-La documentación será actualizada cuando se incorporen los módulos de sesiones, QR y asistencias.
+**Estado:** arquitectura implementada y documentada según el repositorio académico integrado; se conservan oportunidades de evolución identificadas por CK y por el alcance limitado de algunas pruebas.
