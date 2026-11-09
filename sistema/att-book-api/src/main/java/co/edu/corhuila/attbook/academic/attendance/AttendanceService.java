@@ -59,97 +59,132 @@ public class AttendanceService {
     }
 
     // REGISTRAR ASISTENCIA - ESTUDIANTE
-    @Transactional
-    public AttendanceResponse registerAttendance(
-            AttendanceRequest request,
-            SessionActor actor
-    ) {
-        requireStudent(actor);
 
-        if (request == null
-                || request.qr() == null
-                || request.qr().isBlank()) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "QR code is required"
-            );
-        }
+@Transactional
+public AttendanceResponse registerAttendance(
+        AttendanceRequest request,
+        SessionActor actor
+) {
+    requireStudent(actor);
+    validateAttendanceRequest(request);
 
-        QrCode qrCode = qrCodeRepository
-                .findByToken(request.qr().trim())
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST,
-                        "Invalid QR code"
-                ));
+    QrCode qrCode = findValidQr(request.qr().trim());
+    ClassSession session = findQrSession(qrCode);
 
-        if (!qrCode.isActive()) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "QR code is inactive"
-            );
-        }
+    requireEnrollment(session, actor);
+    requireNotRegistered(session, actor);
 
-        if (!Instant.now().isBefore(qrCode.getExpiresAt())) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "QR code has expired"
-            );
-        }
+    return saveAttendance(session, actor);
+}
 
-        ClassSession session = sessionRepository
-                .findById(qrCode.getSessionId())
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Session not found"
-                ));
-
-        boolean enrolled = enrollmentRepository
-                .existsByStudentIdAndCourseId(
-                        actor.userId(),
-                        session.getCourseId()
-                );
-
-        if (!enrolled) {
-            throw new ResponseStatusException(
-                    HttpStatus.FORBIDDEN,
-                    "Student is not enrolled in this course"
-            );
-        }
-
-        boolean alreadyRegistered = attendanceRepository
-                .existsByStudentIdAndSessionId(
-                        actor.userId(),
-                        session.getId()
-                );
-
-        if (alreadyRegistered) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "Attendance already registered"
-            );
-        }
-
-        Attendance attendance = new Attendance(
-                actor.userId(),
-                session.getId(),
-                LocalDateTime.now(ZoneOffset.UTC)
+private void validateAttendanceRequest(
+        AttendanceRequest request
+) {
+    if (request == null
+            || request.qr() == null
+            || request.qr().isBlank()) {
+        throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "QR code is required"
         );
-
-        try {
-            Attendance saved = attendanceRepository
-                    .saveAndFlush(attendance);
-
-            return AttendanceResponse.from(saved);
-
-        } catch (DataIntegrityViolationException exception) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "Attendance could not be registered; "
-                            + "a record may already exist",
-                    exception
-            );
-        }
     }
+}
+
+private QrCode findValidQr(String token) {
+    QrCode qrCode = qrCodeRepository
+            .findByToken(token)
+            .orElseThrow(() -> new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Invalid QR code"
+            ));
+
+    if (!qrCode.isActive()) {
+        throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "QR code is inactive"
+        );
+    }
+
+    if (!Instant.now().isBefore(qrCode.getExpiresAt())) {
+        throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "QR code has expired"
+        );
+    }
+
+    return qrCode;
+}
+
+private ClassSession findQrSession(QrCode qrCode) {
+    return sessionRepository
+            .findById(qrCode.getSessionId())
+            .orElseThrow(() -> new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Session not found"
+            ));
+}
+
+private void requireEnrollment(
+        ClassSession session,
+        SessionActor actor
+) {
+    boolean enrolled = enrollmentRepository
+            .existsByStudentIdAndCourseId(
+                    actor.userId(),
+                    session.getCourseId()
+            );
+
+    if (!enrolled) {
+        throw new ResponseStatusException(
+                HttpStatus.FORBIDDEN,
+                "Student is not enrolled in this course"
+        );
+    }
+}
+
+private void requireNotRegistered(
+        ClassSession session,
+        SessionActor actor
+) {
+    boolean alreadyRegistered = attendanceRepository
+            .existsByStudentIdAndSessionId(
+                    actor.userId(),
+                    session.getId()
+            );
+
+    if (alreadyRegistered) {
+        throw new ResponseStatusException(
+                HttpStatus.CONFLICT,
+                "Attendance already registered"
+        );
+    }
+}
+
+private AttendanceResponse saveAttendance(
+        ClassSession session,
+        SessionActor actor
+) {
+    Attendance attendance = new Attendance(
+            actor.userId(),
+            session.getId(),
+            LocalDateTime.now(ZoneOffset.UTC)
+    );
+
+    try {
+        Attendance saved = attendanceRepository
+                .saveAndFlush(attendance);
+
+        return AttendanceResponse.from(saved);
+
+    } catch (DataIntegrityViolationException exception) {
+        throw new ResponseStatusException(
+                HttpStatus.CONFLICT,
+                "Attendance could not be registered; "
+                        + "a record may already exist",
+                exception
+        );
+    }
+}
 
     // CONSULTAR HISTORIAL PERSONAL DEL ESTUDIANTE
     @Transactional(readOnly = true)

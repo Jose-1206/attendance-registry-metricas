@@ -164,92 +164,121 @@ public class SessionService {
                 ));
     }
 
-    private void requireCourseAccess(
-            Long courseId,
-            SessionActor actor
-    ) {
-        if (courseId == null || courseId <= 0) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Invalid course ID"
-            );
-        }
 
-        Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Course not found"
-                ));
-
-        if ("TEACHER".equals(actor.role())) {
-            if (!course.getTeacherId().equals(actor.userId())) {
-                throw new ResponseStatusException(
-                        HttpStatus.FORBIDDEN,
-                        "Access denied"
-                );
-            }
-        } else if ("STUDENT".equals(actor.role())) {
-            boolean enrolled =
-                    enrollmentRepository.existsByStudentIdAndCourseId(
-                            actor.userId(),
-                            courseId
-                    );
-
-            if (!enrolled) {
-                throw new ResponseStatusException(
-                        HttpStatus.FORBIDDEN,
-                        "Student is not enrolled in this course"
-                );
-            }
-        } else {
-            throw new ResponseStatusException(
-                    HttpStatus.FORBIDDEN,
-                    "Role not allowed"
-            );
-        }
+private void requireCourseAccess(
+        Long courseId,
+        SessionActor actor
+) {
+    if (courseId == null || courseId <= 0) {
+        throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Invalid course ID"
+        );
     }
 
-    private void validateRequest(SessionRequest request) {
-        if (request == null) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Session data is required"
-            );
-        }
+    Course course = courseRepository.findById(courseId)
+            .orElseThrow(() -> new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Course not found"
+            ));
 
-        if (request.courseId() == null || request.courseId() <= 0) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Invalid course ID"
-            );
-        }
-
-        if (request.title() == null
-                || request.title().isBlank()
-                || request.title().length() > 150) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Invalid session title"
-            );
-        }
-
-        if (request.description() != null
-                && request.description().length() > 500) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Session description is too long"
-            );
-        }
-
-        if (request.startAt() == null
-                || request.endAt() == null
-                || !request.endAt().isAfter(request.startAt())) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "End time must be after start time"
-            );
-        }
+    if ("TEACHER".equals(actor.role())) {
+        requireTeacherCourseAccess(course, actor);
+    } else if ("STUDENT".equals(actor.role())) {
+        requireStudentCourseAccess(courseId, actor);
+    } else {
+        throw new ResponseStatusException(
+                HttpStatus.FORBIDDEN,
+                "Role not allowed"
+        );
     }
+}
+
+private void requireTeacherCourseAccess(
+        Course course,
+        SessionActor actor
+) {
+    if (!course.getTeacherId().equals(actor.userId())) {
+        throw new ResponseStatusException(
+                HttpStatus.FORBIDDEN,
+                "Access denied"
+        );
+    }
+}
+
+private void requireStudentCourseAccess(
+        Long courseId,
+        SessionActor actor
+) {
+    boolean enrolled =
+            enrollmentRepository.existsByStudentIdAndCourseId(
+                    actor.userId(),
+                    courseId
+            );
+
+    if (!enrolled) {
+        throw new ResponseStatusException(
+                HttpStatus.FORBIDDEN,
+                "Student is not enrolled in this course"
+        );
+    }
+}
+
+private void validateRequest(SessionRequest request) {
+    if (request == null) {
+        throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Session data is required"
+        );
+    }
+
+    validateCourseId(request.courseId());
+    validateTitle(request.title());
+    validateDescription(request.description());
+    validateDates(request);
+}
+
+private void validateCourseId(Long courseId) {
+    if (courseId == null || courseId <= 0) {
+        throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Invalid course ID"
+        );
+    }
+}
+
+private void validateTitle(String title) {
+    if (title == null
+            || title.isBlank()
+            || title.length() > 150) {
+        throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Invalid session title"
+        );
+    }
+}
+
+private void validateDescription(String description) {
+    if (description != null
+            && description.length() > 500) {
+        throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Session description is too long"
+        );
+    }
+}
+
+private void validateDates(SessionRequest request) {
+    if (request.startAt() == null
+            || request.endAt() == null
+            || !request.endAt().isAfter(request.startAt())) {
+        throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "End time must be after start time"
+        );
+    }
+}
+
 
     private void requireRole(SessionActor actor, String role) {
         requireAuthenticated(actor);
