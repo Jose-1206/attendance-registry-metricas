@@ -71,18 +71,21 @@ determinar si necesitan una mejor distribución de responsabilidades.
 
 - Compilación Java: BUILD SUCCESS.
 - PMD después de la refactorización: cero violaciones.
-- Pruebas ejecutadas: 134.
-- Pruebas sin errores: 133.
-- Pruebas con errores: 1.
-- Prueba afectada: AttBookApiApplicationTests.contextLoads.
+- Pruebas automatizadas ejecutadas: 134.
+- Pruebas exitosas: 134.
+- Fallos: 0.
+- Errores: 0.
+- Pruebas omitidas: 0.
+- Resultado de Maven: BUILD SUCCESS.
 
-La prueba contextLoads no logró iniciar Spring Boot debido a una
-URL de base de datos inválida. En el entorno local no estaban
-configuradas DB_URL, DB_USERNAME ni DB_PASSWORD.
+La prueba AttBookApiApplicationTests.contextLoads se ejecutó
+correctamente después de configurar el entorno local con
+PostgreSQL 17, DB_URL, DB_USERNAME, DB_PASSWORD y una clave
+JWT_SECRET válida codificada en Base64.
 
-La suite completa queda pendiente de ejecutarse con la
-configuración de base de datos adecuada.
-
+La validación se realizó mediante el comando mvn test,
+sin modificar el código del backend ni utilizar una clave
+JWT de producción.
 ## 7. Evidencias
 
 - docs/metricas/ck-inicial/
@@ -98,8 +101,10 @@ configuración de base de datos adecuada.
 2. El RNF-01 cumple según el análisis estático configurado.
 3. CK presenta resultados mixtos: algunas métricas permanecieron
    estables y otras aumentaron.
-4. La compilación es exitosa, pero la suite completa de pruebas
-   requiere configurar correctamente la conexión a PostgreSQL.
+4. La compilación y las 134 pruebas automatizadas fueron exitosas. La suite se ejecutó
+   con PostgreSQL 17 y una clave JWT de pruebas configurados correctamente.
 5. Los reportes conservados permiten reproducir y comparar
    las mediciones.
+
+
 
