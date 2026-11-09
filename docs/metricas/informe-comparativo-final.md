@@ -233,7 +233,7 @@ Los archivos CSV y XML constituyen la evidencia de las mediciones realizadas.
 
 7. La calidad interna del software debe evaluarse utilizando diferentes métricas de manera complementaria, evitando depender de un único indicador.
 
-8. La evaluación de LOC por método queda identificada como una medición pendiente para completar la verificación del umbral de 50 líneas efectivas.
+8. LOC por método ya se realizó usando los resultados de CK y no se encontraron métodos no constructores superiores a 50 LOC según ese criterio.
 
 ## 10. Referencias
 
