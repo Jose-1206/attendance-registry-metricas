@@ -1,3 +1,4 @@
+
 // @vitest-environment jsdom
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -26,6 +27,15 @@ vi.mock('./features/courses/CoursesPage', () => ({
     <section>
       <h1>Cursos protegidos</h1>
       <span data-testid="course-token">{accessToken}</span>
+    </section>
+  ),
+}))
+
+vi.mock('./features/enrollments/StudentEnrollmentsPage', () => ({
+  default: ({ accessToken }: { accessToken: string }) => (
+    <section>
+      <h1>My enrollments</h1>
+      <span data-testid="enrollment-token">{accessToken}</span>
     </section>
   ),
 }))
@@ -197,9 +207,12 @@ describe('Portal authentication', () => {
 
     expect(
       await screen.findByRole('heading', {
-        name: 'Mi cuenta de estudiante',
+        name: 'My enrollments',
       }),
     ).toBeTruthy()
+
+    expect(screen.getByTestId('enrollment-token').textContent)
+      .toBe('student-test-token')
 
     expect(
       screen.queryByRole('heading', { name: 'Cursos protegidos' }),

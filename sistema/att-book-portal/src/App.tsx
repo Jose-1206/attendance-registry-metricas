@@ -1,6 +1,9 @@
+
 import { useEffect, useState } from 'react'
-import CoursesPage from './features/courses/CoursesPage'
+import TeacherDashboard from './features/teacher/TeacherDashboard'
 import LoginPage from './features/auth/LoginPage'
+import { RegisterPage } from './features/auth/RegisterPage'
+import StudentEnrollmentsPage from './features/enrollments/StudentEnrollmentsPage'
 import { authApi, AuthApiError } from './features/auth/authApi'
 import type { AuthSession } from './features/auth/authApi'
 import './App.css'
@@ -15,7 +18,7 @@ function storedToken(): string | null {
   }
 }
 
-function storeToken(token: string | null) {
+function storeToken(token: string | null): void {
   try {
     if (token) {
       sessionStorage.setItem(SESSION_KEY, token)
@@ -23,14 +26,15 @@ function storeToken(token: string | null) {
       sessionStorage.removeItem(SESSION_KEY)
     }
   } catch {
-    // Authentication still works in memory if storage is unavailable.
+    // La autenticación continúa funcionando en memoria.
   }
 }
 
 function App() {
+  const [authView, setAuthView] = useState<'login' | 'register'>('login')
   const [session, setSession] = useState<AuthSession | null>(null)
-  const [checking, setChecking] = useState(
-  () => Boolean(storedToken()),
+  const [checking, setChecking] = useState<boolean>(
+    () => Boolean(storedToken())
   )
   const [restoreError, setRestoreError] = useState('')
   const [notice, setNotice] = useState('')
@@ -41,10 +45,12 @@ function App() {
     const token = storedToken()
 
     if (!token) {
-     return () => controller.abort()
+      setChecking(false)
+      return () => controller.abort()
     }
 
-    authApi.restore(token, controller.signal)
+    authApi
+      .restore(token, controller.signal)
       .then((restored) => {
         if (!controller.signal.aborted) {
           setSession(restored)
@@ -54,15 +60,15 @@ function App() {
         if (controller.signal.aborted) return
 
         if (
-          cause instanceof AuthApiError
-          && [401, 403, 404].includes(cause.status)
+          cause instanceof AuthApiError &&
+          [401, 403, 404].includes(cause.status)
         ) {
           storeToken(null)
           setSession(null)
           setNotice('La sesión ya no es válida. Ingresa nuevamente.')
         } else {
           setRestoreError(
-            'No se pudo verificar la sesión. Comprueba la conexión.',
+            'No se pudo verificar la sesión. Comprueba la conexión.'
           )
         }
       })
@@ -81,13 +87,15 @@ function App() {
     function expireSession() {
       storeToken(null)
       setSession(null)
+      setAuthView('login')
       setNotice('La sesión venció. Ingresa nuevamente.')
     }
 
     const remaining = session.expiresAt - Date.now()
+
     const timer = window.setTimeout(
       expireSession,
-      Math.max(0, Math.min(remaining, 2147483647)),
+      Math.max(0, Math.min(remaining, 2147483647))
     )
 
     function checkExpiration() {
@@ -107,6 +115,7 @@ function App() {
   function acceptSession(authenticated: AuthSession) {
     storeToken(authenticated.token)
     setSession(authenticated)
+    setAuthView('login')
     setNotice('')
     setRestoreError('')
   }
@@ -114,8 +123,19 @@ function App() {
   function logout() {
     storeToken(null)
     setSession(null)
+    setAuthView('login')
     setRestoreError('')
     setNotice('Cerraste sesión.')
+  }
+
+  function goToLogin() {
+    setAuthView('login')
+    setNotice('')
+  }
+
+  function goToRegister() {
+    setAuthView('register')
+    setNotice('')
   }
 
   return (
@@ -125,6 +145,7 @@ function App() {
           <a className="brand" href="/">
             Attendance Registry
           </a>
+
           <p className="brand-description">
             Gestión de cursos y asistencia
           </p>
@@ -139,6 +160,7 @@ function App() {
         ) : restoreError ? (
           <section className="auth-panel">
             <p role="alert">{restoreError}</p>
+
             <button
               type="button"
               onClick={() => {
@@ -148,11 +170,17 @@ function App() {
             >
               Reintentar
             </button>
-            <button type="button" onClick={() => {
-              setRestoreError('')
-              setChecking(true)
-              setRetry((value) => value + 1)
-            }}>
+
+            <button
+              type="button"
+              onClick={() => {
+                storeToken(null)
+                setSession(null)
+                setRestoreError('')
+                setChecking(false)
+                setAuthView('login')
+              }}
+            >
               Volver al inicio de sesión
             </button>
           </section>
@@ -165,26 +193,40 @@ function App() {
                   ? 'Docente'
                   : 'Estudiante'}
               </p>
+
               <button type="button" onClick={logout}>
                 Cerrar sesión
               </button>
             </div>
 
             {session.user.rol === 'TEACHER' ? (
-              <CoursesPage accessToken={session.token} />
+              <TeacherDashboard accessToken={session.token} />
             ) : (
-              <section className="auth-panel">
-                <h1>Mi cuenta de estudiante</h1>
-                <p>Iniciaste sesión correctamente.</p>
-                <p>
-                  Las funciones de asistencia se incorporarán
-                  al integrar el módulo correspondiente.
-                </p>
-              </section>
+              <StudentEnrollmentsPage accessToken={session.token} />
             )}
           </>
+        ) : authView === 'register' ? (
+          <RegisterPage onGoToLogin={goToLogin} />
         ) : (
-          <LoginPage onAuthenticated={acceptSession} />
+          <>
+            <LoginPage onAuthenticated={acceptSession} />
+
+            <div
+              style={{
+                textAlign: 'center',
+                marginTop: '1rem'
+              }}
+            >
+              <p>¿Todavía no tienes una cuenta?</p>
+
+              <button
+                type="button"
+                onClick={goToRegister}
+              >
+                Registrarse como estudiante
+              </button>
+            </div>
+          </>
         )}
       </main>
 

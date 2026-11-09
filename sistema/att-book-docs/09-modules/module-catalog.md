@@ -1,47 +1,44 @@
 # 09 — Module Catalog
 
-> [!NOTE] INSTRUCTIONS
-> One row per module this project actually ships — never a module drawn only
-> as an illustrative example elsewhere in this repository. Add a row the
-> same day a module is added to
-> [`module-boundaries.md`](../02-domain/module-boundaries.md), not after.
-> Delete this block once the table matches that file exactly.
+## Purpose
 
-## Modules
+This catalog summarizes the Attendance Registry modules already defined in
+the domain and architecture documentation.
 
-| Module | Purpose | Owns | Public API | Status |
-|---|---|---|---|---|
-| `catalog` | Create, price, and retire products and categories | `categories`, `products` | `CatalogFacade` | Stable |
-| `billing` | Issue invoices from confirmed orders and record payments against them | `invoices`, `invoice_lines`, `payments` | `BillingFacade` | Evolving |
+It replaces the unrelated catalog and billing examples inherited from
+the documentation framework. It does not introduce additional scope.
 
-## Status legend
+## Documented modules
 
-| Status | Meaning |
-|---|---|
-| Stable | The public API is safe to build on; a breaking change needs an ADR |
-| Evolving | The public API is still gaining methods; expect changes between sprints |
+| Module | Responsibility | Owned domain entities |
+|---|---|---|
+| `identity` | User accounts, authentication, and roles. | User |
+| `academic` | Courses and student enrollments. | Course, Enrollment |
+| `class-sessions` | Class sessions and temporary QR codes. | ClassSession, QRCode |
+| `attendance` | Attendance registration, personal history, and session attendance review. | AttendanceRecord |
 
-Status describes the public API's own maturity, not whether the module is
-running — the application deploys as one unit, so every module here ships
-together, on every release, with no address or health check of its own.
+## Ownership
 
-## Dependencies between modules
+Ownership follows the existing domain boundaries and logical data model.
 
-```mermaid
-flowchart LR
-    billing["billing<br/>BillingFacade"] -->|public API call| catalog["catalog<br/>CatalogFacade"]
-```
+Domain entity names do not establish physical PostgreSQL schemas or table
+names. Physical mappings require comparison with persistence definitions.
 
-A module with no outgoing arrow depends on nothing else in this catalog; one
-with no incoming arrow has no internal consumer yet, which is not a defect.
+Cross-module interactions must follow the architectural boundaries.
+Listing a module here does not demonstrate that automated boundary checks
+are configured or passing.
 
-## Keeping this catalog current
+## Verification status
 
-A module earns a row here only after it has one in
-[`module-boundaries.md`](../02-domain/module-boundaries.md) and a folder
-copied from [`_template-module/`](./_template-module/README.md). A module
-dropped from the domain map loses its row here in the same pull request.
+This catalog records documented responsibilities.
 
----
+Implementation completeness, public interfaces, module runbooks, and
+automated boundary enforcement require their corresponding evidence.
+No stability classification is assigned without that review.
 
-**Related:** [`../02-domain/module-boundaries.md`](../02-domain/module-boundaries.md) · [`./_template-module/README.md`](./_template-module/README.md)
+## Related documents
+
+- [Module boundaries](../02-domain/module-boundaries.md)
+- [Domain entities and rules](../02-domain/entities-and-rules.md)
+- [Data models](../06-data/models.md)
+- [Modular monolith](../05-architecture/modular-monolith.md)

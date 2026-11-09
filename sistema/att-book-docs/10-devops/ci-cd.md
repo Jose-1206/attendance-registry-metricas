@@ -1,48 +1,101 @@
 # 10 — CI/CD Pipeline
 
-> [!NOTE] INSTRUCTIONS
-> Absorbs the v1.0.0 deployment guide. One pipeline definition, kept in
-> this file, is the only path from a commit to any environment — a second
-> pipeline for a second artifact would mean this is not a monolith
-> anymore. Delete this block once the pipeline has failed on purpose at
-> every stage below.
+## Document status
 
-## One artifact, one pipeline
+This document describes the intended pipeline for Attendance Registry.
 
-The application builds once, into one deployable artifact, in the
-`package` stage below. Staging and production run that same artifact —
-never a second build from the same commit — promoted forward through the
-stages that follow. There is no per-module pipeline and no deploy order
-between modules: the whole application moves together, or not at all.
+Configured jobs, execution results, coverage enforcement, and deployment
+automation require verification in the corresponding repositories.
 
-```mermaid
-flowchart LR
-    A[build] --> B[boundary check] --> C[test] --> D[package] --> E[deploy]
-```
+This document does not claim that those checks are implemented or passing.
 
-`boundary check` runs straight after `build` and before `test`, matching
-[`boundary-enforcement.md`](../05-architecture/boundary-enforcement.md): a
-boundary violation makes the test results that would follow uninteresting,
-so the pipeline stops before running them.
+## Pipeline scope
 
-## Stages
+The backend follows the documented modular monolith architecture.
+Its internal modules are built and released together.
 
-| Stage | What it does | What makes it fail |
+The pipeline stages below describe the existing architectural target.
+They do not establish that the entire Fullstack system is packaged as
+a single container.
+
+## Intended stages
+
+The documented sequence is:
+
+1. Build.
+2. Boundary check.
+3. Test.
+4. Package.
+5. Deploy and verify.
+
+| Stage | Purpose | Failure condition |
 |---|---|---|
-| `build` | Compiles the application from source | The code does not compile, or a dependency cannot be resolved |
-| `boundary check` | Runs the stack's tool from [`boundary-enforcement.md`](../05-architecture/boundary-enforcement.md) against the whole tree | Any module reaches another module's `internal/` code |
-| `test` | Runs the `unit` and `module-integration` layers from [`testing-strategy.md`](../11-quality/testing-strategy.md) | A test fails, or coverage drops below **NFR-07** (80% on changed files, 90% on the `billing` module) |
-| `package` | Assembles the one deployable artifact — a container image, executable bundle, or package, per `_stacks/` — and tags it with the commit | The artifact cannot be assembled |
-| `deploy` | Promotes the artifact to an environment from [`environments.md`](./environments.md) and runs a smoke test | Staging: the `end-to-end` layer fails. Production: the health check fails, or approval is not granted |
+| Build | Compile the application and resolve dependencies. | Compilation fails or a dependency cannot be resolved. |
+| Boundary check | Verify the documented internal module boundaries. | A prohibited dependency between modules is detected. |
+| Test | Execute the unit and module-integration tests defined in the testing strategy. | A test fails or measured coverage is below NFR-08. |
+| Package | Produce a versioned deployable artifact associated with the tested revision. | Packaging fails. |
+| Deploy and verify | Deploy the selected artifact and execute the corresponding verification. | Deployment or its verification fails. |
 
-## When each stage runs
+Automated execution of a stage must be supported by its configuration
+and execution report.
 
-| Trigger | Stages that run |
-|---|---|
-| Every pull request | `build` through `package` — the artifact is built and proven, never deployed |
-| Merge to `dev` | All five stages; `deploy` targets `staging` |
-| A release tag on `main` | All five stages; `deploy` targets `production`, gated on manual approval |
+## Coverage requirement
 
----
+NFR-08 defines the coverage target:
 
-**Related:** [`../05-architecture/boundary-enforcement.md`](../05-architecture/boundary-enforcement.md) · [`../11-quality/testing-strategy.md`](../11-quality/testing-strategy.md)
+> At least 80% automated test coverage on changed backend files.
+
+NFR-07 concerns dependency security. It is not the coverage requirement.
+
+The authoritative requirements are documented in
+[non-functional requirements](../04-requirements/non-functional.md).
+
+Coverage remains unverified until an applicable report is available.
+No additional module-specific percentage is defined here.
+
+## Testing layers
+
+The documented testing layers are:
+
+- `unit`: individual behavior inside a module.
+- `module-integration`: behavior through module public interfaces.
+- `end-to-end`: behavior of the complete application.
+
+Unit and module-integration tests are intended for the test stage.
+End-to-end checks verify the deployed application.
+
+See [testing strategy](../11-quality/testing-strategy.md).
+
+## Execution and promotion
+
+Pull-request checks, deployment triggers, approvals, and artifact promotion
+must be compared with the actual repository workflows and governance rules.
+
+A stage described in this document must not be reported as automated
+solely because it appears in the intended sequence.
+
+The revision being deployed must be identifiable so that its verification
+results can be associated with the correct artifact.
+
+## Verification status
+
+The following items require evidence before the pipeline is considered
+operational:
+
+- Build execution.
+- Automated module boundary verification.
+- Test execution and results.
+- Coverage measurement against NFR-08.
+- Artifact creation.
+- Deployment verification.
+- Applicable review and approval controls.
+
+These are verification targets, not a record of completed executions.
+
+## Related documents
+
+- [Boundary enforcement](../05-architecture/boundary-enforcement.md)
+- [Testing strategy](../11-quality/testing-strategy.md)
+- [Non-functional requirements](../04-requirements/non-functional.md)
+- [Environments](./environments.md)
+- [Git conventions](../00-governance/git-conventions.md)

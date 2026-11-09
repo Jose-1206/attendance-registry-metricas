@@ -1,0 +1,271 @@
+{
+    "metrics": {
+        "http_req_duration{endpoint:perfil_estudiante}": {
+            "p(90)": 111.8267162,
+            "p(95)": 116.39143055,
+            "avg": 32.444248720000004,
+            "min": 4.507985,
+            "med": 12.991084,
+            "max": 123.748204,
+            "thresholds": {
+                "p(95)<2000": false
+            }
+        },
+        "solicitudes_rnf03{endpoint:cursos_docente}": {
+            "count": 100,
+            "rate": 25.927838553435112,
+            "thresholds": {
+                "count>=100": false
+            }
+        },
+        "data_sent": {
+            "count": 168459,
+            "rate": 43677.777548731254
+        },
+        "iteration_duration": {
+            "avg": 623.3472818700002,
+            "min": 525.809941,
+            "med": 557.289767,
+            "max": 777.304856,
+            "p(90)": 766.5170353000001,
+            "p(95)": 770.6876364999999
+        },
+        "checks{endpoint:historial_asistencias}": {
+            "passes": 100,
+            "fails": 0,
+            "thresholds": {
+                "rate==1": false
+            },
+            "value": 1
+        },
+        "checks{endpoint:perfil_estudiante}": {
+            "passes": 100,
+            "fails": 0,
+            "thresholds": {
+                "rate==1": false
+            },
+            "value": 1
+        },
+        "http_req_tls_handshaking": {
+            "avg": 0,
+            "min": 0,
+            "med": 0,
+            "max": 0,
+            "p(90)": 0,
+            "p(95)": 0
+        },
+        "data_received": {
+            "count": 175848,
+            "rate": 45593.585539444575
+        },
+        "http_req_duration{endpoint:cursos_docente}": {
+            "med": 15.9369855,
+            "max": 121.656641,
+            "p(90)": 91.23093470000003,
+            "p(95)": 106.8347986,
+            "avg": 37.13520644999999,
+            "min": 4.890226,
+            "thresholds": {
+                "p(95)<2000": false
+            }
+        },
+        "solicitudes_rnf03{endpoint:historial_asistencias}": {
+            "count": 100,
+            "rate": 25.927838553435112,
+            "thresholds": {
+                "count>=100": false
+            }
+        },
+        "checks{endpoint:inscripciones_estudiante}": {
+            "passes": 100,
+            "fails": 0,
+            "thresholds": {
+                "rate==1": false
+            },
+            "value": 1
+        },
+        "http_req_blocked": {
+            "avg": 0.125062276119403,
+            "min": 0.001722,
+            "med": 0.0060315,
+            "max": 3.498409,
+            "p(90)": 0.018023200000000038,
+            "p(95)": 0.3120200499999992
+        },
+        "http_req_sending": {
+            "avg": 0.051406288557213915,
+            "min": 0.006683,
+            "med": 0.019226,
+            "max": 2.498999,
+            "p(90)": 0.05881440000000002,
+            "p(95)": 0.11965219999999997
+        },
+        "http_req_duration{endpoint:historial_asistencias}": {
+            "max": 135.511184,
+            "p(90)": 38.00074480000001,
+            "p(95)": 57.83176894999997,
+            "avg": 22.82630005,
+            "min": 5.431467,
+            "med": 15.788726,
+            "thresholds": {
+                "p(95)<2000": false
+            }
+        },
+        "http_req_waiting": {
+            "p(95)": 110.79258494999998,
+            "avg": 31.5834117487562,
+            "min": 4.395223,
+            "med": 15.6409175,
+            "max": 608.115529,
+            "p(90)": 86.83116890000001
+        },
+        "http_req_connecting": {
+            "p(90)": 0,
+            "p(95)": 0.18720984999999774,
+            "avg": 0.10145976616915423,
+            "min": 0,
+            "med": 0,
+            "max": 3.436448
+        },
+        "solicitudes_rnf03{endpoint:perfil_estudiante}": {
+            "count": 100,
+            "rate": 25.927838553435112,
+            "thresholds": {
+                "count>=100": false
+            }
+        },
+        "vus": {
+            "value": 20,
+            "min": 20,
+            "max": 20
+        },
+        "http_req_failed{endpoint:inscripciones_estudiante}": {
+            "passes": 0,
+            "fails": 100,
+            "thresholds": {
+                "rate==0": false
+            },
+            "value": 0
+        },
+        "http_req_failed{endpoint:cursos_docente}": {
+            "passes": 0,
+            "fails": 100,
+            "thresholds": {
+                "rate==0": false
+            },
+            "value": 0
+        },
+        "checks": {
+            "passes": 400,
+            "fails": 0,
+            "value": 1
+        },
+        "iterations": {
+            "count": 100,
+            "rate": 25.927838553435112
+        },
+        "http_req_failed": {
+            "passes": 0,
+            "fails": 402,
+            "value": 0
+        },
+        "http_req_duration": {
+            "med": 15.804239500000001,
+            "max": 608.424057,
+            "p(90)": 87.08158310000002,
+            "p(95)": 110.85853104999998,
+            "avg": 31.797003144278612,
+            "min": 4.507985
+        },
+        "http_req_failed{endpoint:historial_asistencias}": {
+            "passes": 0,
+            "fails": 100,
+            "thresholds": {
+                "rate==0": false
+            },
+            "value": 0
+        },
+        "checks{endpoint:cursos_docente}": {
+            "passes": 100,
+            "fails": 0,
+            "thresholds": {
+                "rate==1": false
+            },
+            "value": 1
+        },
+        "http_req_failed{endpoint:perfil_estudiante}": {
+            "passes": 0,
+            "fails": 100,
+            "thresholds": {
+                "rate==0": false
+            },
+            "value": 0
+        },
+        "http_reqs": {
+            "count": 402,
+            "rate": 104.22991098480915
+        },
+        "http_req_duration{endpoint:inscripciones_estudiante}": {
+            "avg": 28.449678039999995,
+            "min": 4.740722,
+            "med": 18.387745,
+            "max": 101.622613,
+            "p(90)": 61.665801900000076,
+            "p(95)": 83.30327525,
+            "thresholds": {
+                "p(95)<2000": false
+            }
+        },
+        "http_req_duration{expected_response:true}": {
+            "max": 608.424057,
+            "p(90)": 87.08158310000002,
+            "p(95)": 110.85853104999998,
+            "avg": 31.797003144278612,
+            "min": 4.507985,
+            "med": 15.804239500000001
+        },
+        "solicitudes_rnf03{endpoint:inscripciones_estudiante}": {
+            "count": 100,
+            "rate": 25.927838553435112,
+            "thresholds": {
+                "count>=100": false
+            }
+        },
+        "vus_max": {
+            "min": 20,
+            "max": 20,
+            "value": 20
+        },
+        "http_req_receiving": {
+            "med": 0.0895285,
+            "max": 6.075997,
+            "p(90)": 0.21583800000000009,
+            "p(95)": 0.32915104999999995,
+            "avg": 0.16218510696517413,
+            "min": 0.016322
+        },
+        "solicitudes_rnf03": {
+            "count": 400,
+            "rate": 103.71135421374045
+        }
+    },
+    "setup_data": {
+        "docente": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZSI6IlRFQUNIRVIiLCJpc3MiOiJhdHQtYm9vay1hcGkiLCJleHAiOjE3OTQyNTIxMzUsImlhdCI6MTc5NDI0ODUzNSwianRpIjoiZTdhYjA5ZWEtYWM1Mi00YTM4LTkzNjUtYTA4YzA3NzQzNjUxIiwiZW1haWwiOiJ0ZWFjaGVyLm93bmVyQGV4YW1wbGUudGVzdCJ9.J2O5P5IqZ5YckVkLf_iunrLtyZ6Xc8XV1XID0bjfxSY",
+        "estudiante": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwicm9sZSI6IlNUVURFTlQiLCJpc3MiOiJhdHQtYm9vay1hcGkiLCJleHAiOjE3OTQyNTIxMzUsImlhdCI6MTc5NDI0ODUzNSwianRpIjoiNGI1ZGU5NGItODI3Ny00MjVhLTk2YmQtNmI2ZTViMWE1ZTg4IiwiZW1haWwiOiJzdHVkZW50LmVucm9sbGVkQGV4YW1wbGUudGVzdCJ9.VYDLfxTXaKnAkz0sRt_jA_RU7qTd11vcICPx6R5uUd8"
+    },
+    "root_group": {
+        "groups": {},
+        "checks": {
+                "Respuesta HTTP 200": {
+                    "passes": 400,
+                    "fails": 0,
+                    "name": "Respuesta HTTP 200",
+                    "path": "::Respuesta HTTP 200",
+                    "id": "5b8d608b50810da28a13e252fc74ee73"
+                }
+            },
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e"
+    }
+}

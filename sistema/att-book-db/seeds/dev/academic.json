@@ -1,0 +1,54 @@
+{
+  "description": "Academic demonstration data for Attendance Registry",
+  "version": 1,
+  "requiredUsers": [
+    {
+      "reference": "teacher_owner",
+      "role": "TEACHER"
+    },
+    {
+      "reference": "teacher_other",
+      "role": "TEACHER"
+    },
+    {
+      "reference": "student_enrolled",
+      "role": "STUDENT"
+    },
+    {
+      "reference": "student_not_enrolled",
+      "role": "STUDENT"
+    }
+  ],
+  "courses": [
+    {
+      "reference": "course_fullstack",
+      "nombre": "Desarrollo Fullstack",
+      "codigo": "DEMO-FS-01",
+      "teacherReference": "teacher_owner"
+    },
+    {
+      "reference": "course_databases",
+      "nombre": "Bases de Datos",
+      "codigo": "DEMO-BD-01",
+      "teacherReference": "teacher_owner"
+    },
+    {
+      "reference": "course_other_teacher",
+      "nombre": "Ingeniería de Software",
+      "codigo": "DEMO-IS-01",
+      "teacherReference": "teacher_other"
+    }
+  ],
+  "enrollments": [
+    {
+      "studentReference": "student_enrolled",
+      "courseReference": "course_fullstack",
+      "enrollmentDate": "2026-11-01"
+    },
+    {
+      "studentReference": "student_enrolled",
+      "courseReference": "course_databases",
+      "enrollmentDate": "2026-11-01"
+    }
+  ]
+}

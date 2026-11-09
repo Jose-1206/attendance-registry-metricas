@@ -5,6 +5,12 @@ export interface AuthUser {
   rol: 'TEACHER' | 'STUDENT'
 }
 
+export interface RegisterStudentInput {
+  nombre: string
+  email: string
+  password: string
+}
+
 export interface AuthSession {
   token: string
   user: AuthUser
@@ -99,6 +105,87 @@ async function request(
 }
 
 export const authApi = {
+  async register(input: RegisterStudentInput): Promise<AuthUser> {
+    const nombre = input.nombre.trim()
+    const email = input.email.trim().toLowerCase()
+
+    if (!nombre) {
+      throw new AuthApiError(400, 'El nombre es obligatorio.')
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      throw new AuthApiError(400, 'Ingresa un correo electrónico válido.')
+    }
+
+    if (input.password.length < 8) {
+      throw new AuthApiError(
+        400,
+        'La contraseña debe tener al menos 8 caracteres.',
+      )
+    }
+
+    if (new TextEncoder().encode(input.password).length > 72) {
+      throw new AuthApiError(
+        400,
+        'La contraseña no puede superar los 72 bytes.',
+      )
+    }
+
+    let response: Response
+
+    try {
+      response = await fetch('/api/v1/auth/register', {
+        method: 'POST',
+        cache: 'no-store',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          nombre,
+          email,
+          password: input.password,
+        }),
+      })
+    } catch {
+      throw new AuthApiError(
+        0,
+        'No se pudo conectar con el servidor. Intenta nuevamente.',
+      )
+    }
+
+    if (!response.ok) {
+      if (response.status === 409) {
+        throw new AuthApiError(
+          409,
+          'Este correo electrónico ya está registrado.',
+        )
+      }
+
+      if (response.status === 400) {
+        throw new AuthApiError(
+          400,
+          'Los datos no son válidos. Revisa el formulario.',
+        )
+      }
+
+      throw new AuthApiError(
+        response.status,
+        'No fue posible registrar la cuenta.',
+      )
+    }
+
+    const result: unknown = await response.json()
+    const user = parseUser(result)
+
+    if (user.rol !== 'STUDENT') {
+      throw new Error('El servidor devolvió un rol inesperado.')
+    }
+
+    return user
+  },
+
+
   async login(email: string, password: string): Promise<AuthSession> {
     const result = await request('/auth/login', {
       method: 'POST',

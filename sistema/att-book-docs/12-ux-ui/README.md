@@ -2,12 +2,12 @@
 
 ## Purpose
 
-This section defines the user-interface decisions for the **Attendance** mobile
+This section defines the user-interface decisions for the **Attendance Registry** web
 application. It documents the shared visual rules, reusable components, screen
 states, validation feedback, and accessibility expectations used by students
 and teachers throughout the attendance workflow.
 
-**Applies to this system:** yes — Attendance is a mobile application with
+**Applies to this system:** yes — Attendance Registry is a web application with
 role-based screens for `STUDENT` and `TEACHER` users.
 
 ## UX scope
@@ -141,7 +141,7 @@ This section does not define:
 - a backend-for-frontend service;
 - capabilities outside the documented Attendance MVP.
 
-Attendance uses one mobile client that communicates with the application API
+Attendance Registry uses one web client that communicates with the application API
 documented in [`../07-api/README.md`](../07-api/README.md).
 
 ## Ready when

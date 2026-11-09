@@ -1,0 +1,28 @@
+.teacher-sessions { display: grid; gap: 24px; }
+.teacher-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.teacher-heading h1 { margin: 0; }
+.teacher-course-picker { display: grid; gap: 8px; max-width: 450px; font-weight: 650; }
+.teacher-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; align-items: start; }
+.teacher-module { min-width: 0; background: #fff; border: 1px solid #dce4ef; border-radius: 14px; padding: 24px; }
+.teacher-module h2,.teacher-module h3 { margin-top: 0; }
+.teacher-module fieldset { display: grid; gap: 10px; padding: 0; margin: 0; border: 0; }
+.teacher-module input,.teacher-module select,.teacher-module textarea,.teacher-course-picker select {
+  width: 100%; border: 1px solid #a6b7c9; border-radius: 8px; padding: 10px; background: #fff; color: #172b45;
+}
+.teacher-module textarea { min-height: 80px; resize: vertical; }
+.teacher-module button,.teacher-heading button { border: 1px solid #1d4ed8; color: #1d4ed8; background: #fff; border-radius: 8px; padding: 10px 14px; cursor: pointer; }
+.teacher-module button:disabled,.teacher-heading button:disabled { opacity: .5; cursor: not-allowed; }
+.teacher-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.teacher-session-list { list-style: none; padding: 0; display: grid; gap: 12px; }
+.teacher-session-item { border: 1px solid #e1e7f0; border-radius: 10px; padding: 14px; }
+.teacher-session-item h3 { margin: 0; }
+.teacher-error { color: #9d1733; padding: 10px; background: #fdf0f3; border-radius: 8px; }
+.teacher-notice { color: #166534; padding: 10px; background: #effaf1; border-radius: 8px; }
+.teacher-selected-session { display: grid; gap: 12px; }
+.teacher-selected-session h2 { margin: 0; }
+.teacher-qr { display: grid; gap: 8px; justify-items: center; padding-top: 20px; overflow-wrap: anywhere; }
+.teacher-qr p { margin: 0; }
+.teacher-table-wrap { overflow-x: auto; }
+.teacher-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+.teacher-table th,.teacher-table td { text-align: left; padding: 10px; border-bottom: 1px solid #dce4ef; }
+@media (max-width: 760px) { .teacher-grid { grid-template-columns: 1fr; } }

@@ -1,3 +1,4 @@
+
 package co.edu.corhuila.attbook.identity.security;
 
 import java.time.Instant;
@@ -57,6 +58,14 @@ public class SecurityConfig {
                                 "/cursos",
                                 "/cursos/**"
                         ).hasRole("TEACHER")
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/sessions"
+                        ).hasRole("TEACHER")
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/sessions/courses/**"
+                        ).hasAnyRole("TEACHER", "STUDENT")
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(resourceServer -> resourceServer
