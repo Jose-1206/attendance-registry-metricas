@@ -1,136 +1,70 @@
-﻿# Resultados de las pruebas de integración — Attendance Registry
+# Resultados de pruebas e integración — Attendance Registry
 
-## 1. Información general
+**Fecha de evidencias:** 9 de noviembre de 2026
+**Institución:** CORHUILA, Métricas y Estándares de Calidad
+**Responsable de integración funcional:** José Miguel Aya Peralta
+**Consolidación de resultados de backend:** Luis Fernando Perez Chala
 
-**Proyecto:** Attendance Registry — Métricas y Estándares de Calidad
+## 1. Objetivo y entorno
 
-**Institución:** Corporación Universitaria del Huila (CORHUILA)
+Verificar las funciones de Attendance Registry y documentar los resultados de pruebas automatizadas y no funcionales empleados en la evaluación de mantenibilidad. El sistema se ejecutó en un entorno local con Docker Compose, PostgreSQL 17, API Spring Boot y portal React/TypeScript servido mediante Nginx.
 
-**Asignatura:** Métricas y Estándares de Calidad
+La validación manual de interfaz y flujos, la suite de frontend, las pruebas de seguridad y el rendimiento fueron documentadas durante la integración del 9 de noviembre. Luis Fernando incorporó posteriormente los resultados completos de pruebas de backend en el PR #8.
 
-**Fecha de ejecución:** 9 de noviembre de 2026
+## 2. Requisitos funcionales: pruebas manuales
 
-**Responsable:** José Miguel Aya Peralta
-
-**Tipo de pruebas:** Pruebas funcionales manuales de integración
-
-## 2. Entorno de pruebas
-
-El sistema fue ejecutado localmente mediante Docker Compose.
-
-Tecnologías utilizadas:
-
-- Frontend: React y TypeScript.
-- Backend: Java y Spring Boot.
-- Base de datos: PostgreSQL 17.
-- Infraestructura: Docker y Docker Compose.
-- Pruebas automatizadas del frontend: Vitest.
-
-Se verificó que los contenedores correspondientes a la base de datos, la API y el portal web estuvieran en ejecución.
-
-Adicionalmente, el endpoint de salud del portal respondió con el código HTTP 200 OK.
-
-## 3. Objetivo de las pruebas
-
-Comprobar que los principales módulos de Attendance Registry funcionan correctamente después de integrar la versión actualizada del sistema al repositorio de Métricas y Estándares de Calidad.
-
-Las pruebas permiten verificar los requisitos funcionales establecidos y confirmar la comunicación entre la interfaz web, la API y la base de datos.
-
-## 4. Resultados de los requisitos funcionales
-
-| Código | Prueba realizada | Resultado |
+| Código | Escenario | Resultado registrado |
 |---|---|---|
-| RF-01 | Registro de un estudiante nuevo | PASS |
-| RF-02 | Inicio de sesión y separación de roles | PASS |
-| RF-03 | Creación de un curso como docente | PASS |
-| RF-04 | Consulta de cursos del docente | PASS |
-| RF-05 | Modificación de un curso | PASS |
-| RF-06 | Creación de una sesión académica | PASS |
-| RF-07 | Consulta de sesiones académicas | PASS |
-| RF-08 | Generación de un código QR | PASS |
-| RF-09 | Registro de asistencia como estudiante | PASS |
-| RF-10 | Consulta de asistencias como docente | PASS |
+| RF-01 | Registro de estudiante | PASS |
+| RF-02 | Inicio de sesión y control de roles | PASS |
+| RF-03 | Crear curso | PASS |
+| RF-04 | Consultar cursos propios | PASS |
+| RF-05 | Actualizar curso | PASS |
+| RF-06 | Crear sesión académica | PASS |
+| RF-07 | Consultar sesiones | PASS |
+| RF-08 | Generar QR | PASS |
+| RF-09 | Registrar asistencia con QR | PASS |
+| RF-10 | Consultar asistencias como docente | PASS |
 
-## 5. Resumen de resultados
+**Resultado:** 10 de 10 escenarios manuales aprobados, 0 fallos reportados.
 
-Se evaluaron los diez requisitos funcionales definidos para el proyecto.
+## 3. Pruebas automatizadas
 
-- Total de requisitos evaluados: 10.
-- Pruebas aprobadas: 10.
-- Pruebas fallidas: 0.
-- Porcentaje de aprobación: 100 %.
+| Verificación | Resultado documentado | Referencia |
+|---|---|---|
+| Backend JUnit/Mockito | **134 pruebas; 134 aprobadas; 0 fallos; 0 errores; 0 omitidas** | `docs/metricas/informe-comparativo-final.md` (PR #8) |
+| Arranque Spring Boot (`contextLoads`) | PASS con PostgreSQL y variables locales configuradas | Informe comparativo, apartado 6 |
+| Frontend Vitest | **27 de 27 aprobadas** en 4 archivos de pruebas | Registro de integración |
+| Frontend Oxlint | 0 errores; 1 advertencia | Registro de integración |
+| Compilación frontend | Exitosa | Registro de integración |
+| PMD tras refactorización | 0 infracciones con umbral configurado | `docs/metricas/pmd-post-refactor/pmd.xml` |
 
-Los resultados corresponden a las pruebas manuales reportadas durante la validación del sistema integrado.
+**Reproducción:** en `sistema/att-book-api`, `./mvnw.cmd -B test` en Windows (con `DB_URL`, `DB_USERNAME`, `DB_PASSWORD` y `JWT_SECRET` de prueba configurados). La suite necesita una base PostgreSQL **de pruebas, aislada**, ya que `contextLoads` inicia el contexto de Spring Boot. En `sistema/att-book-portal`, ejecutar `npm test`, `npm run lint` y `npm run build` tras instalar las dependencias.
 
-## 6. Pruebas automatizadas del frontend
+No se incluyen credenciales ni tokens en este documento.
 
-Se ejecutaron los siguientes comandos:
+## 4. Seguridad — RNF-02
 
-- npm test
-- npm run lint
-- npm run build
+**40 de 40** casos documentados aprobaron. Se evaluaron accesos anónimos, credenciales/token inválidos y restricciones por rol mediante comprobaciones de códigos HTTP.
 
-Resultados obtenidos:
+**Alcance:** verifica los escenarios listados; no equivale a un pentest, no incluye inyección, revisión de dependencias ni todas las combinaciones de propiedad de recursos.
 
-| Verificación | Resultado |
-|---|---|
-| Pruebas automatizadas | 27 de 27 aprobadas |
-| Archivos de pruebas | 4 de 4 aprobados |
-| Análisis estático con Oxlint | 0 errores y 1 advertencia |
-| Compilación del frontend | Exitosa |
+Evidencia: [informe RNF-02](seguridad/informe-rnf-02.md) y [CSV de resultados](seguridad/resultados-rnf-02.csv).
 
-Durante la integración se identificaron siete pruebas fallidas en el módulo de inscripciones debido a expectativas desactualizadas respecto a los textos de la interfaz.
+## 5. Rendimiento — RNF-03
 
-Después de actualizar las pruebas y aislar la dependencia del historial de asistencias, se ejecutó nuevamente la suite y se obtuvieron 27 pruebas aprobadas.
+Con k6 se evaluaron **4 endpoints GET**, **20 usuarios virtuales**, **100 comprobaciones por endpoint** y **400 de 400 comprobaciones aprobadas**, sin errores HTTP. El **P95 HTTP global fue 110,85 ms**, por debajo de 2000 ms.
 
-## 7. Verificación de infraestructura
+Los endpoints se solicitaron secuencialmente dentro de cada iteración. No se midieron operaciones de creación, actualización, eliminación o registro de asistencia, ni es una predicción del entorno de producción.
 
-Se utilizó Docker Compose para iniciar los componentes del sistema.
+Evidencia: [informe RNF-03](rendimiento/informe-rnf-03.md), [script k6](rendimiento/rnf-03.js) y [resultado JSON](rendimiento/resultado-rnf03.json).
 
-| Componente | Resultado |
-|---|---|
-| PostgreSQL 17 | En ejecución y saludable |
-| API Spring Boot | En ejecución |
-| Portal React y Nginx | En ejecución |
-| Endpoint /health | HTTP 200 OK |
-| Compilación de imágenes Docker | Exitosa |
+## 6. Infraestructura y advertencias pendientes
 
-Estas verificaciones confirman el funcionamiento inicial de la infraestructura local.
+El despliegue funcional previo documentó los servicios PostgreSQL, API y portal en ejecución, PostgreSQL saludable y un endpoint `/health` con HTTP 200. La validez del despliegue en una demostración posterior debe comprobarse nuevamente en ese equipo.
 
-## 8. Observaciones
+Se mantienen dos advertencias del frontend sin bloqueo de compilación: actualización de estado dentro de un efecto de React (`App.tsx`) y un archivo JavaScript generado por Vite superior a 500 kB. Son **oportunidades de mejora** de mantenibilidad y tamaño de carga.
 
-Durante el análisis del frontend se identificaron dos advertencias:
+## 7. Conclusión
 
-1. Oxlint detectó una actualización de estado dentro de un efecto de React en el archivo App.tsx.
-2. Vite advirtió que uno de los archivos JavaScript generados supera los 500 kB.
-
-Estas advertencias no impidieron completar las pruebas ni la compilación del portal.
-
-Se recomienda revisarlas posteriormente como posibles oportunidades de mejora.
-
-## 9. Limitaciones
-
-Los resultados presentados corresponden a las verificaciones funcionales manuales, las pruebas automatizadas del frontend y la comprobación inicial de infraestructura.
-
-Aún están pendientes:
-
-- Ejecución y documentación de las pruebas automatizadas del backend.
-- Medición de complejidad ciclomática.
-- Medición de líneas de código.
-- Aplicación de la suite de métricas CK.
-- Validación completa de los requisitos no funcionales.
-- Comparación de resultados antes y después de las refactorizaciones.
-
-## 10. Evidencias
-
-Las capturas de pantalla y los registros de ejecución se almacenarán en la carpeta docs/evidencias/.
-
-Las evidencias deben identificar la prueba realizada y su resultado, evitando incluir contraseñas, tokens de autenticación o información sensible.
-
-## 11. Conclusión
-
-La validación funcional manual de Attendance Registry permitió comprobar satisfactoriamente los diez requisitos funcionales establecidos para el proyecto.
-
-Las pruebas automatizadas del frontend también finalizaron correctamente, con 27 pruebas aprobadas, mientras que la infraestructura local permitió iniciar los tres servicios principales del sistema.
-
-Estos resultados constituyen la base funcional para las siguientes actividades de análisis de mantenibilidad, medición de métricas y refactorización del código.
+Las verificaciones registradas respaldan el funcionamiento de los diez requisitos funcionales dentro de los escenarios probados. Las 134 pruebas automatizadas del backend finalizaron correctamente tras configurar el entorno, y la refactorización del PR #6 no dejó infracciones en el reporte PMD posterior. Los resultados de RNF-02 y RNF-03 deben interpretarse dentro de sus límites declarados.

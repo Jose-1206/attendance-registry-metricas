@@ -1,308 +1,144 @@
 # Requisitos del sistema — Attendance Registry
 
-## 1. Introducción
+**Asignatura:** Métricas y Estándares de Calidad — CORHUILA
+**Versión:** 2.0, revisión de la implementación integrada (9 de noviembre de 2026)
+**Responsable de documentación:** José Miguel Aya Peralta
 
-Este documento define los requisitos funcionales y no funcionales del sistema Attendance Registry, también conocido como Att-book, para el proyecto final de la asignatura Métricas y Estándares de Calidad.
+## 1. Problema, usuarios y alcance
 
-Los requisitos describen el comportamiento esperado del sistema y establecen criterios verificables para evaluar su cumplimiento.
+El registro manual de asistencia académica puede producir duplicaciones, errores y dificultades para consultar historiales. Attendance Registry permite a docentes administrar cursos y sesiones, generar códigos QR temporales y revisar asistencias; permite a estudiantes registrarse, autenticarse y registrar asistencia.
 
-Se utiliza como referencia la implementación de Attendance Registry desarrollada en la asignatura Fullstack.
+El alcance académico comprende **10 requisitos funcionales** y **3 no funcionales**. No incluye notificaciones automáticas, recuperación de contraseñas ni integración con sistemas externos. La implementación funcional se integró en el repositorio académico y fue evaluada mediante pruebas manuales, automatizadas y métricas de calidad.
 
-## 2. Descripción del problema
-
-En el entorno académico, el registro manual de asistencia puede ocasionar errores, pérdida de información, duplicación de registros y dificultades para consultar el historial de los estudiantes.
-
-Attendance Registry busca facilitar este proceso mediante una plataforma que permita a los docentes administrar cursos y sesiones académicas, generar códigos QR y consultar reportes de asistencia.
-
-Los estudiantes podrán autenticarse y registrar su asistencia mediante códigos QR válidos.
-
-## 3. Usuarios del sistema
-
-### 3.1. Docente
-
-Usuario responsable de administrar cursos y sesiones académicas.
-
-Sus principales funciones son:
-
-- Crear, consultar y actualizar cursos.
-- Crear y consultar sesiones académicas.
-- Generar códigos QR de asistencia.
-- Consultar los reportes de asistencia de sus sesiones.
-
-### 3.2. Estudiante
-
-Usuario que participa en los cursos académicos.
-
-Sus principales funciones son:
-
-- Registrarse en el sistema.
-- Iniciar sesión.
-- Registrar su asistencia mediante un código QR válido.
-
-## 4. Alcance del proyecto
-
-El proyecto contempla la implementación y evaluación de las funcionalidades principales de Attendance Registry.
-
-Se incluyen:
-
-- Autenticación y autorización.
-- Administración de cursos.
-- Gestión de sesiones académicas.
-- Generación de códigos QR temporales.
-- Registro y validación de asistencias.
-- Consulta de reportes.
-- Pruebas funcionales.
-- Evaluación de mantenibilidad del código.
-
-Quedan fuera del alcance inicial las notificaciones automáticas, la recuperación de contraseñas y las integraciones con plataformas académicas externas.
-
-## 5. Requisitos funcionales
+## 2. Requisitos funcionales y criterios de aceptación
 
 ### RF-01. Registro de estudiantes
 
-**Descripción:** El sistema debe permitir registrar estudiantes mediante sus datos personales y credenciales de acceso.
+**Actor:** Estudiante. **Estado:** Implementado; prueba funcional manual PASS.
 
-**Actor:** Estudiante.
-
-**Criterios de aceptación:**
-
-- Un estudiante con datos válidos puede registrarse correctamente.
-- El sistema impide registrar dos cuentas con el mismo correo electrónico.
-- Los datos obligatorios son validados.
-- La contraseña no se almacena en texto plano.
-- El estudiante registrado puede autenticarse posteriormente.
-
-**Estado preliminar:** Implementado en la API. Pendiente verificar el flujo completo desde el portal.
+- Permite registrar un estudiante con datos válidos.
+- Rechaza un correo electrónico repetido y los datos obligatorios inválidos.
+- No guarda contraseñas en texto plano.
+- El estudiante puede autenticarse luego del registro.
 
 ### RF-02. Autenticación y control de acceso
 
-**Descripción:** El sistema debe permitir el inicio de sesión y restringir el acceso a las funcionalidades según el rol del usuario.
+**Actores:** Docente y estudiante. **Estado:** Implementado; prueba funcional manual PASS.
 
-**Actores:** Docente y estudiante.
-
-**Criterios de aceptación:**
-
-- Un usuario con credenciales válidas puede iniciar sesión.
-- Las credenciales incorrectas son rechazadas.
-- Las solicitudes a recursos protegidos requieren autenticación.
-- Un estudiante no puede ejecutar operaciones reservadas a docentes.
-- Un docente únicamente puede administrar los recursos que le corresponden, cuando aplique.
-
-**Estado preliminar:** Implementado en la API y el portal para las funcionalidades existentes.
+- Acepta credenciales correctas y rechaza las incorrectas.
+- Requiere autenticación en endpoints protegidos.
+- Restringe las operaciones según rol y, cuando corresponde, propiedad del recurso.
 
 ### RF-03. Creación de cursos
 
-**Descripción:** El sistema debe permitir a los docentes registrar nuevos cursos académicos.
+**Actor:** Docente. **Estado:** Implementado; prueba funcional manual PASS.
 
-**Actor:** Docente.
-
-**Criterios de aceptación:**
-
-- El docente puede crear un curso con información válida.
-- El sistema valida los campos obligatorios.
-- El curso queda asociado al docente que lo creó.
-- Los estudiantes no pueden crear cursos.
-- La información creada puede consultarse posteriormente.
-
-**Estado preliminar:** Implementado.
+- Permite crear cursos con campos válidos y vinculados al docente.
+- Rechaza campos obligatorios inválidos.
+- Impide que un estudiante cree cursos.
+- El curso creado se puede consultar posteriormente.
 
 ### RF-04. Consulta de cursos
 
-**Descripción:** El sistema debe permitir a los docentes consultar los cursos académicos que administran.
+**Actor:** Docente. **Estado:** Implementado; prueba funcional manual PASS.
 
-**Actor:** Docente.
-
-**Criterios de aceptación:**
-
-- El docente autenticado puede obtener sus cursos.
-- La consulta devuelve la información correspondiente a cada curso.
-- La lista no incluye cursos pertenecientes a otros docentes.
-- Si el docente no tiene cursos, el sistema muestra una lista vacía sin producir errores.
-
-**Estado preliminar:** Implementado.
+- Permite consultar los cursos propios y excluye los ajenos.
+- Devuelve una lista vacía válida cuando no existen cursos.
 
 ### RF-05. Actualización de cursos
 
-**Descripción:** El sistema debe permitir a los docentes modificar la información de sus cursos.
+**Actor:** Docente. **Estado:** Implementado; prueba funcional manual PASS.
 
-**Actor:** Docente.
-
-**Criterios de aceptación:**
-
-- El docente puede actualizar un curso propio utilizando datos válidos.
-- Los cambios se conservan al consultar nuevamente el curso.
-- Un docente no puede modificar cursos de otros docentes.
-- Las solicitudes con información inválida son rechazadas.
-
-**Estado preliminar:** Implementado.
+- Permite modificar datos válidos de un curso propio y conservar los cambios.
+- Rechaza modificaciones sobre cursos ajenos y datos inválidos.
 
 ### RF-06. Creación de sesiones académicas
 
-**Descripción:** El sistema debe permitir a los docentes crear sesiones académicas vinculadas a un curso existente.
+**Actor:** Docente. **Estado:** Implementado; prueba funcional manual PASS.
 
-**Actor:** Docente.
-
-**Criterios de aceptación:**
-
-- Un docente puede crear una sesión para un curso propio.
-- La sesión queda relacionada con el curso correspondiente.
-- El sistema valida los datos obligatorios.
-- No se permite crear sesiones en cursos ajenos.
-- La sesión creada puede consultarse posteriormente.
-
-**Estado preliminar:** Pendiente de implementación según la copia revisada.
+- Permite crear sesiones dentro de un curso propio.
+- Valida los datos obligatorios y rechaza cursos ajenos.
+- Permite consultar las sesiones creadas.
 
 ### RF-07. Consulta de sesiones académicas
 
-**Descripción:** El sistema debe permitir consultar las sesiones académicas asociadas a un curso.
+**Actores:** Docente autorizado y estudiante inscrito, conforme a los permisos implementados. **Estado:** Implementado; prueba funcional manual PASS.
 
-**Actor:** Docente.
-
-**Criterios de aceptación:**
-
-- El docente puede consultar las sesiones de un curso propio.
-- Cada sesión presenta la información necesaria para identificarla.
-- El sistema no mezcla sesiones pertenecientes a cursos diferentes.
-- Los accesos no autorizados son rechazados.
-
-**Estado preliminar:** Pendiente de implementación.
+- Lista las sesiones del curso solicitado sin mezclar cursos.
+- Rechaza el acceso de usuarios sin permisos o sin inscripción.
 
 ### RF-08. Generación de códigos QR temporales
 
-**Descripción:** El sistema debe permitir a los docentes generar códigos QR temporales asociados a una sesión académica.
+**Actor:** Docente. **Estado:** Implementado; prueba funcional manual PASS.
 
-**Actor:** Docente.
-
-**Criterios de aceptación:**
-
-- El docente puede generar un código QR para una sesión propia.
-- El código generado se relaciona con una sesión específica.
-- El código tiene una fecha u hora de vencimiento.
-- Un código vencido no puede utilizarse para registrar asistencia.
-- Los usuarios no autorizados no pueden generar códigos QR para sesiones ajenas.
-
-**Estado preliminar:** Pendiente de implementación.
+- Genera un QR asociado a una sesión propia.
+- El código tiene vigencia temporal; un QR vencido no autoriza registrar asistencia.
+- Rechaza la generación por usuarios no autorizados.
 
 ### RF-09. Registro de asistencia mediante QR
 
-**Descripción:** El sistema debe permitir a los estudiantes registrar su asistencia utilizando un código QR válido.
+**Actor:** Estudiante. **Estado:** Implementado; prueba funcional manual PASS.
 
-**Actor:** Estudiante.
-
-**Criterios de aceptación:**
-
-- Un estudiante autenticado puede registrar asistencia con un código válido.
-- El registro queda relacionado con el estudiante y la sesión.
-- Un código QR vencido es rechazado.
-- No se permite registrar dos asistencias del mismo estudiante en una misma sesión.
-- Los códigos inexistentes o inválidos son rechazados.
-- El sistema confirma el resultado del intento de registro.
-
-**Estado preliminar:** Pendiente de implementación.
+- Permite registrar la asistencia con un QR activo y válido.
+- Relaciona estudiante y sesión, y confirma el resultado del intento.
+- Rechaza QR inexistentes, inactivos o vencidos.
+- Rechaza estudiantes no inscritos y duplicados para una misma sesión.
 
 ### RF-10. Consulta de reportes de asistencia
 
-**Descripción:** El sistema debe permitir a los docentes consultar los registros de asistencia correspondientes a sus sesiones académicas.
+**Actor:** Docente. **Estado:** Implementado; prueba funcional manual PASS.
 
-**Actor:** Docente.
+- Permite consultar asistencias de las sesiones propias.
+- Identifica los registros correspondientes a la sesión.
+- Rechaza docentes ajenos y devuelve una lista vacía válida sin asistencias.
 
-**Criterios de aceptación:**
-
-- El docente puede consultar los registros de una sesión propia.
-- El reporte identifica los estudiantes que registraron asistencia.
-- Los registros corresponden a la sesión solicitada.
-- Un docente no puede consultar reportes de sesiones pertenecientes a otros docentes.
-- Cuando no existen asistencias, el sistema devuelve un resultado vacío válido.
-
-**Estado preliminar:** Pendiente de implementación.
-
-## 6. Requisitos no funcionales
+## 3. Requisitos no funcionales
 
 ### RNF-01. Mantenibilidad
 
-**Categoría:** Mantenibilidad.
-
-**Descripción:** Los métodos del backend incluidos en el alcance final de evaluación deberán presentar una complejidad ciclomática menor o igual a 10.
-
-**Criterio de aceptación:** El 100 % de los métodos incluidos en el alcance final acordado debe cumplir V(G) ≤ 10.
-
-**Forma de verificación:** Aplicar una herramienta de análisis estático que permita medir la complejidad ciclomática de los métodos del backend.
-
-**Evidencia:** Tabla de complejidad por método y registro de resultados antes y después de las mejoras.
+- **Criterio de aceptación:** V(G) ≤ 10 en el 100 % de métodos del backend incluidos en el análisis final.
+- **Verificación:** PMD 7.17.0, regla `CyclomaticComplexity`, `methodReportLevel=11`.
+- **Resultado:** 3 infracciones en la versión funcional anterior a refactorizar y 0 en la posterior. **Cumple según la configuración aplicada.**
+- **Evidencia:** [`pmd-final/pmd.xml`](../metricas/pmd-final/pmd.xml), [`pmd-post-refactor/pmd.xml`](../metricas/pmd-post-refactor/pmd.xml) e [informe comparativo](../metricas/informe-comparativo-final.md).
 
 ### RNF-02. Seguridad
 
-**Categoría:** Seguridad.
-
-**Descripción:** El sistema debe proteger los recursos restringidos mediante mecanismos de autenticación y autorización.
-
-**Criterio de aceptación:** El 100 % de los endpoints identificados como protegidos debe rechazar solicitudes sin autenticación válida y solicitudes que incumplan las políticas de rol o propiedad.
-
-**Forma de verificación:** Ejecutar pruebas automatizadas de seguridad para los endpoints protegidos, incluyendo solicitudes anónimas, credenciales inválidas y usuarios sin permisos.
-
-**Evidencia:** Resultados de pruebas de autenticación y autorización.
+- **Criterio de aceptación:** los endpoints protegidos deben rechazar solicitudes sin autenticación válida o sin permisos suficientes.
+- **Verificación:** prueba documentada sobre escenarios anónimos, token inválido y restricciones de roles.
+- **Resultado:** 40 casos ejecutados; 40 aprobados. **Cumple en los escenarios probados**. No se ha acreditado una auditoría completa de todos los riesgos ni de todas las combinaciones de propiedad de recursos.
+- **Evidencia:** [informe RNF-02](../pruebas/seguridad/informe-rnf-02.md) y [`resultados-rnf-02.csv`](../pruebas/seguridad/resultados-rnf-02.csv).
 
 ### RNF-03. Rendimiento
 
-**Categoría:** Rendimiento.
+- **Criterio de aceptación:** P95 ≤ 2000 ms para los endpoints críticos bajo carga documentada.
+- **Condiciones:** k6, 20 usuarios virtuales, cuatro endpoints GET, 100 solicitudes/comprobaciones por endpoint (400 en total), entorno Docker local.
+- **Resultado:** P95 HTTP global = 110,85 ms, 0 fallos HTTP, 400/400 comprobaciones exitosas. **Cumple en los endpoints y condiciones evaluados**. La prueba no cubre escritura ni garantiza 20 solicitudes simultáneas por endpoint.
+- **Evidencia:** [informe RNF-03](../pruebas/rendimiento/informe-rnf-03.md), [`resultado-rnf03.json`](../pruebas/rendimiento/resultado-rnf03.json).
 
-**Descripción:** Los endpoints principales del sistema deberán responder en un tiempo adecuado durante las operaciones habituales.
+## 4. Matriz de trazabilidad: requisito → componente → evidencia
 
-**Criterio de aceptación:** El percentil 95 de los tiempos de respuesta deberá ser menor o igual a 2.000 milisegundos.
-
-**Condiciones propuestas:** Ejecutar una prueba controlada sobre los endpoints críticos con 20 usuarios concurrentes y al menos 100 solicitudes por endpoint, registrando el hardware y el entorno de ejecución.
-
-**Forma de verificación:** Utilizar una herramienta de pruebas de rendimiento para registrar los tiempos de respuesta.
-
-**Evidencia:** Resultados de la prueba de carga, percentiles y descripción del entorno.
-
-## 7. Matriz de trazabilidad preliminar
-
-| Requisito | Componente previsto o existente | Prueba requerida | Estado |
+| Requisito | Componentes implementados | Evidencia | Resultado |
 |---|---|---|---|
-| RF-01 | AuthController / IdentityService | Registro válido, duplicado y datos inválidos | API implementada |
-| RF-02 | AuthController / SecurityConfig | Autenticación y autorización por rol | Implementado |
-| RF-03 | CourseController / CourseService | Creación y validación de curso | Implementado |
-| RF-04 | CourseController / CourseService | Consulta filtrada por docente | Implementado |
-| RF-05 | CourseController / CourseService | Actualización y autorización | Implementado |
-| RF-06 | Módulo de sesiones por desarrollar | Creación y vinculación con curso | Pendiente |
-| RF-07 | Módulo de sesiones por desarrollar | Consulta de sesiones y autorización | Pendiente |
-| RF-08 | Módulo QR por desarrollar | Generación, asociación y expiración | Pendiente |
-| RF-09 | Módulo de asistencias por desarrollar | Registro, duplicados y QR vencido | Pendiente |
-| RF-10 | Módulo de reportes por desarrollar | Consulta y restricción por propietario | Pendiente |
-| RNF-01 | Backend Java | Medición V(G) | Sin medición actual |
-| RNF-02 | Configuración de seguridad y endpoints | Pruebas de acceso | Verificación pendiente |
-| RNF-03 | API REST | Pruebas de rendimiento | Verificación pendiente |
+| RF-01 | `AuthController`, `IdentityService` | Prueba manual RF-01; pruebas de identidad | PASS |
+| RF-02 | `AuthController`, `SecurityConfig`, seguridad JWT | Prueba manual RF-02; seguridad RNF-02 | PASS |
+| RF-03 | `CourseController`, `CourseService` | Prueba manual RF-03; `CourseServiceTest` | PASS |
+| RF-04 | `CourseController`, `CourseService` | Prueba manual RF-04; pruebas de cursos | PASS |
+| RF-05 | `CourseController`, `CourseService` | Prueba manual RF-05; pruebas de cursos | PASS |
+| RF-06 | `SessionController`, `SessionService` | Prueba manual RF-06; `SessionServiceTest` | PASS |
+| RF-07 | `SessionController`, `SessionService` | Prueba manual RF-07; pruebas de sesiones | PASS |
+| RF-08 | `QrController`, servicio del módulo `sessions/qr` | Prueba manual RF-08; verificación funcional de QR | PASS |
+| RF-09 | `AttendanceController`, `AttendanceService` | Prueba manual RF-09; `AttendanceServiceTest` | PASS |
+| RF-10 | `AttendanceController`, `AttendanceService` | Prueba manual RF-10; consulta de asistencias | PASS |
+| RNF-01 | Backend Java, servicios y métodos de producción | Informes XML de PMD antes/después | 3 → 0 infracciones |
+| RNF-02 | Spring Security, controladores protegidos | 40 casos documentados | 40/40 PASS |
+| RNF-03 | API REST, endpoints GET críticos | Script y resultados k6 | P95 global 110,85 ms |
 
-Los componentes pendientes serán actualizados cuando se implemente el código correspondiente.
+**Fuente de la verificación funcional:** [`../pruebas/integration-tests.md`](../pruebas/integration-tests.md), que registra 10/10 pruebas manuales aprobadas. **Evidencia adicional de backend:** [`../metricas/informe-comparativo-final.md`](../metricas/informe-comparativo-final.md), con 134/134 pruebas automatizadas documentadas después de configurar el entorno de PostgreSQL.
 
-## 8. Verificación del cumplimiento
+La matriz vincula las pruebas existentes por módulo; no supone que cada criterio de aceptación haya sido objeto de una prueba automatizada individual. La cobertura de casos límite y de seguridad puede ampliarse.
 
-Cada requisito funcional se considerará cumplido cuando:
+## 5. Estado y limitaciones
 
-1. La funcionalidad correspondiente esté implementada.
-2. Se satisfagan todos sus criterios de aceptación.
-3. Exista evidencia de las pruebas correspondientes.
-4. Se actualice su trazabilidad con los componentes reales.
+Los diez requisitos funcionales del alcance están implementados y cuentan con verificación manual registrada. El criterio RNF-01 se alcanzó en la medición PMD posterior a la refactorización. RNF-02 y RNF-03 se consideran aprobados **solo dentro de sus escenarios documentados**.
 
-Los requisitos no funcionales se considerarán cumplidos únicamente cuando las mediciones realizadas alcancen los criterios establecidos.
-
-## 9. Relación con el proyecto de Métricas
-
-La implementación de estos requisitos permitirá analizar la calidad interna del sistema mediante tres grupos principales de métricas:
-
-- Complejidad ciclomática.
-- Líneas de código.
-- Suite CK para diseño orientado a objetos.
-
-Los resultados permitirán detectar problemas de mantenibilidad, priorizar mejoras y evaluar el efecto de posibles refactorizaciones.
-
-## 10. Estado del documento
-
-**Versión:** 1.0 — Definición inicial.
-
-**Responsable:** José Miguel Aya Peralta.
-
-**Estado:** Documento preliminar. Los requisitos y criterios deberán verificarse contra la implementación final, los resultados de pruebas y la aprobación del docente.
-
-**Nota:** Los estados de implementación se basan en la copia de Attendance Registry analizada para este proyecto y no sustituyen una nueva verificación del código integrado.
+La evaluación de mantenibilidad también identificó alertas en WMC, CBO y LCOM* de algunas clases. Son oportunidades de evolución y no se presentan como defectos funcionales confirmados. El informe final académico debe incorporar los resultados reales, riesgos y propuestas priorizadas.
