@@ -1,7 +1,7 @@
 # Requisitos del sistema — Attendance Registry
 
-**Asignatura:** Métricas y Estándares de Calidad — CORHUILA  
-**Versión:** 2.0, revisión de la implementación integrada (9 de noviembre de 2026)  
+**Asignatura:** Métricas y Estándares de Calidad — CORHUILA
+**Versión:** 2.0, revisión de la implementación integrada (9 de noviembre de 2026)
 **Responsable de documentación:** José Miguel Aya Peralta
 
 ## 1. Problema, usuarios y alcance

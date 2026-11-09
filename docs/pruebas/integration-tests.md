@@ -1,8 +1,8 @@
 # Resultados de pruebas e integración — Attendance Registry
 
-**Fecha de evidencias:** 9 de noviembre de 2026  
-**Institución:** CORHUILA, Métricas y Estándares de Calidad  
-**Responsable de integración funcional:** José Miguel Aya Peralta  
+**Fecha de evidencias:** 9 de noviembre de 2026
+**Institución:** CORHUILA, Métricas y Estándares de Calidad
+**Responsable de integración funcional:** José Miguel Aya Peralta
 **Consolidación de resultados de backend:** Luis Fernando Perez Chala
 
 ## 1. Objetivo y entorno

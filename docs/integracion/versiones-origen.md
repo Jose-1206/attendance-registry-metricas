@@ -1,7 +1,7 @@
 # Registro de versiones de origen — Attendance Registry
 
-**Fecha de integración:** 9 de noviembre de 2026  
-**Rama de integración original:** `chore/sync-attendance-registry`  
+**Fecha de integración:** 9 de noviembre de 2026
+**Rama de integración original:** `chore/sync-attendance-registry`
 **Repositorio académico:** `Jose-1206/attendance-registry-metricas`
 
 ## 1. Objetivo

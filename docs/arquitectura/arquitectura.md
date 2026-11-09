@@ -1,7 +1,7 @@
 # Arquitectura del sistema — Attendance Registry
 
-**Versión:** 2.0, sistema integrado y evaluado (9 de noviembre de 2026)  
-**Asignatura:** Métricas y Estándares de Calidad — CORHUILA  
+**Versión:** 2.0, sistema integrado y evaluado (9 de noviembre de 2026)
+**Asignatura:** Métricas y Estándares de Calidad — CORHUILA
 **Documentación:** José Miguel Aya Peralta; análisis de métricas: Luis Fernando Perez Chala.
 
 ## 1. Propósito y tipo de arquitectura
