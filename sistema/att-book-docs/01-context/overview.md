@@ -2,7 +2,7 @@
 
 ## What it does
 
-Attendance is a mobile application for university attendance control.
+Attendance Registry is a web application for university attendance control.
 
 Teachers can manage their courses, create class sessions, generate temporary
 QR codes, and review attendance records for their class sessions.

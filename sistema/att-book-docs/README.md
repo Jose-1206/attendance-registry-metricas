@@ -79,13 +79,26 @@ See the [REST conventions](./07-api/rest-conventions.md) and
 
 ## Project repositories
 
-| Repository | Purpose and technology | Responsible person |
-| --- | --- | --- |
-| [att-book-docs](https://github.com/code-corhuila/att-book-docs) | Markdown documentation and OpenAPI contracts | Jose Miguel Aya Peralta |
-| [att-book-api](https://github.com/code-corhuila/att-book-api) | Spring Boot REST API | Jose Miguel Aya Peralta |
-| [att-book-portal](https://github.com/code-corhuila/att-book-portal) | Web portal. SPA framework pending confirmation. | Jose Miguel Aya Peralta |
-| [att-book-db](https://github.com/code-corhuila/att-book-db) | Database schema and migrations. Database engine pending confirmation. | Jose Miguel Aya Peralta |
-| [att-book-infra](https://github.com/code-corhuila/att-book-infra) | Deployment configuration. Deployment tools pending confirmation. | Jose Miguel Aya Peralta |
+The repositories below belong to the Attendance Registry Fullstack project.
+
+Technologies and execution instructions are described in their respective
+repositories. This table summarizes repository responsibilities; it does
+not establish exclusive code authorship.
+
+| Repository | Purpose and technology | Coordination |
+|---|---|---|
+| [att-book-docs](https://github.com/code-corhuila/att-book-docs) | Project documentation, user stories, architecture, and OpenAPI contracts. | Carlos Andres Zuluaga Acuna coordinates documentation corrections with information from the team. |
+| [att-book-api](https://github.com/code-corhuila/att-book-api) | Java and Spring Boot REST API for authentication and attendance workflows. | Jose Miguel coordinates shared security; Juan Jose, Luis Fernando, and Rosfeller contribute their assigned components. |
+| [att-book-portal](https://github.com/code-corhuila/att-book-portal) | React and TypeScript web portal built with Vite. | Juan Jose coordinates navigation and integration with components supplied by the team. |
+| [att-book-db](https://github.com/code-corhuila/att-book-db) | PostgreSQL schema, SQL migrations, and development seeds. | Luis Fernando coordinates database structure with the backend contributors. |
+| [att-book-infra](https://github.com/code-corhuila/att-book-infra) | Docker Compose deployment of PostgreSQL, the API, and the Nginx-served portal. | Juan Jose, Luis Fernando, and Jose Miguel. |
+
+Repository history and pull requests provide the evidence of individual
+contributions.
+
+The technology summary consolidates information from the supplied code
+and infrastructure documentation. It does not change the functional scope
+or establish when a design decision was originally documented.
 
 ---
 

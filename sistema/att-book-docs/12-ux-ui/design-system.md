@@ -3,7 +3,7 @@
 ## Design goals
 
 The Attendance interface is designed for short and repeatable university
-attendance tasks on a mobile device.
+attendance tasks through the web interface.
 
 The interface must make the next valid action clear for each role, keep the QR
 check-in flow fast, and provide immediate feedback after operations that change
@@ -19,7 +19,7 @@ The design system supports these goals:
 
 ## Visual tokens
 
-The following tokens define the visual direction for the Attendance mobile
+The following tokens define the visual direction for the Attendance Registry web
 interface. They are UX/UI design decisions documented for the project and do
 not imply that a frontend implementation already exists.
 
@@ -120,9 +120,9 @@ The scan screen maps real Attendance outcomes to understandable feedback.
 | Successful check-in — `BR-08` | Display success only after backend confirmation. |
 | Backend/network error | Display a retryable error without claiming attendance was stored. |
 
-## Mobile layout
+## Interface layout
 
-Attendance is documented as a mobile application.
+Attendance Registry is documented as a web application in the project README.
 
 Screens use a single-column layout by default.
 
