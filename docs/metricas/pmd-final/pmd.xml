@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd xmlns="http://pmd.sourceforge.net/report/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pmd.sourceforge.net/report/2.0.0 https://pmd.github.io/schema/report_2_0_0.xsd" version="7.17.0" timestamp="2026-11-09T13:42:12.546">
+<file name="C:\Users\JAIDER\OneDrive\Documents\attendance-registry-metricas\sistema\att-book-api\src\main\java\co\edu\corhuila\attbook\academic\attendance\AttendanceService.java">
+<violation beginline="63" endline="63" begincolumn="31" endcolumn="49" rule="CyclomaticComplexity" ruleset="Design" package="co.edu.corhuila.attbook.academic.attendance" class="AttendanceService" method="registerAttendance" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'registerAttendance(AttendanceRequest, SessionActor)' has a cyclomatic complexity of 15.
+</violation>
+</file>
+<file name="C:\Users\JAIDER\OneDrive\Documents\attendance-registry-metricas\sistema\att-book-api\src\main\java\co\edu\corhuila\attbook\academic\sessions\SessionService.java">
+<violation beginline="167" endline="167" begincolumn="18" endcolumn="37" rule="CyclomaticComplexity" ruleset="Design" package="co.edu.corhuila.attbook.academic.sessions" class="SessionService" method="requireCourseAccess" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'requireCourseAccess(Long, SessionActor)' has a cyclomatic complexity of 11.
+</violation>
+<violation beginline="212" endline="212" begincolumn="18" endcolumn="33" rule="CyclomaticComplexity" ruleset="Design" package="co.edu.corhuila.attbook.academic.sessions" class="SessionService" method="validateRequest" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'validateRequest(SessionRequest)' has a cyclomatic complexity of 17.
+</violation>
+</file>
+</pmd>
